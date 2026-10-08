@@ -11,6 +11,10 @@ SilverShop\Page\ProductController:
   extensions:
     - SilverShop\Reviews\Extension\ProductReviewControllerExtension
 
+SilverStripe\SiteConfig\SiteConfig:
+  extensions:
+    - SilverShop\Reviews\Extension\ShopReviewExtension
+
 SilverShop\Reviews\Model\Review:
   # Reviews are hidden until an admin approves them. Set false to publish immediately.
   moderation: true

@@ -5,3 +5,4 @@ After: '#rootroutes'
 SilverStripe\Control\Director:
   rules:
     'review': 'SilverShop\Reviews\Control\ReviewInvitationController'
+    'shop-review': 'SilverShop\Reviews\Control\ShopReviewController'

@@ -20,6 +20,7 @@ use SilverStripe\Forms\HiddenField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\ORM\FieldType\DBDatetime;
+use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * Public landing page for a review invitation. Looks the invitation up by its token, lets the customer
@@ -81,6 +82,16 @@ class ReviewInvitationController extends Controller
 
         $order = $invitation->Order();
         $fields = FieldList::create();
+
+        // Overall shop rating (subject = the store).
+        $fields->push(HeaderField::create('head_shop', _t(self::class . '.OverallExperience', 'Your overall experience'), 3));
+        $fields->push(
+            DropdownField::create('Rating_shop', _t(self::class . '.Rating', 'Rating'), array_combine(range(5, 1), range(5, 1)))
+                ->setEmptyString(_t(self::class . '.Skip', '(skip)'))
+        );
+        $fields->push(TextField::create('Title_shop', _t(self::class . '.Title', 'Title')));
+        $fields->push(TextareaField::create('Content_shop', _t(self::class . '.ShopContent', 'How was your overall experience?'))->setRows(3));
+
         foreach (ReviewInvitationService::create()->reviewableProducts($order) as $product) {
             $pid = (int) $product->ProductID;
             $fields->push(HeaderField::create("head_$pid", $product->Title, 3));
@@ -152,6 +163,35 @@ class ReviewInvitationController extends Controller
             }
             $review->write();
             $created++;
+        }
+
+        // Overall shop review (subject = the store), one per order.
+        $shopRating = (int) ($data['Rating_shop'] ?? 0);
+        if ($shopRating >= 1 && $shopRating <= 5) {
+            $config = SiteConfig::current_site_config();
+            $shopExists = Review::get()->filter([
+                'OrderID' => $order->ID,
+                'SubjectID' => $config->ID,
+                'SubjectClass' => $config->ClassName,
+            ])->exists();
+            if (!$shopExists) {
+                $review = Review::create();
+                $review->Rating = $shopRating;
+                $review->Title = trim((string) ($data['Title_shop'] ?? ''));
+                $review->Content = trim((string) ($data['Content_shop'] ?? ''));
+                $review->AuthorName = ($member && $member->exists()) ? $member->getName() : (string) $email;
+                $review->AuthorEmail = (string) $email;
+                $review->Approved = !$moderation;
+                $review->Verified = true;
+                $review->SubjectID = $config->ID;
+                $review->SubjectClass = $config->ClassName;
+                $review->OrderID = $order->ID;
+                if ($member && $member->exists()) {
+                    $review->MemberID = $member->ID;
+                }
+                $review->write();
+                $created++;
+            }
         }
 
         if ($created > 0) {

@@ -12,6 +12,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HiddenField;
+use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\Validation\RequiredFieldsValidator;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
@@ -98,13 +99,14 @@ class ProductReviewControllerExtension extends Extension
                 ->setDescription(_t(self::class . '.EmailPrivate', 'Not published — used only to verify your purchase.')));
         }
 
-        // Honeypot: real users leave it empty; bots fill every field.
+        // Honeypot: real users never see it; bots fill every field.
         $fields->push(
-            TextField::create(self::HONEYPOT, _t(self::class . '.Website', 'Website'))
-                ->setAttribute('autocomplete', 'off')
-                ->setAttribute('tabindex', '-1')
-                ->setAttribute('style', 'position:absolute!important;left:-9999px!important;width:1px;height:1px;overflow:hidden;')
-                ->addExtraClass('review-hp')
+            LiteralField::create(
+                self::HONEYPOT . '_hp',
+                '<div style="position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden;" aria-hidden="true">'
+                . '<label>Website <input type="text" name="' . self::HONEYPOT . '" autocomplete="off" tabindex="-1" value=""></label>'
+                . '</div>'
+            )
         );
 
         $required = $member ? ['Rating', 'Content'] : ['Rating', 'Content', 'AuthorName', 'AuthorEmail'];
