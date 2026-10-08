@@ -5,14 +5,17 @@ declare(strict_types=1);
 namespace SilverShop\Reviews\Model;
 
 use SilverShop\Model\Order;
+use SilverStripe\Core\Convert;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
+use SilverStripe\Security\SecurityToken;
 
 /**
  * A single review with a star rating, attached to any reviewable subject via a polymorphic relation.
@@ -233,6 +236,24 @@ class Review extends DataObject
     public function VotesEnabled(): bool
     {
         return (bool) self::config()->get('allow_votes');
+    }
+
+    /**
+     * Hidden CSRF field for the helpful-vote POST forms.
+     */
+    public function VoteSecurityField(): DBHTMLText
+    {
+        $token = SecurityToken::inst();
+        $html = DBHTMLText::create();
+        if ($token->getValue()) {
+            $html->setValue(sprintf(
+                '<input type="hidden" name="%s" value="%s">',
+                Convert::raw2att($token->getName()),
+                Convert::raw2att((string) $token->getValue())
+            ));
+        }
+
+        return $html;
     }
 
     public static function HoneypotEnabled(): bool

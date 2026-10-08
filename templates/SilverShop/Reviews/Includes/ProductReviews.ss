@@ -21,7 +21,8 @@
         .review__photos{display:flex;gap:.4rem;margin:.6rem 0;flex-wrap:wrap}
         .review__photos img{border-radius:4px;object-fit:cover}
         .review__helpful{margin:.5rem 0 0;font-size:.8rem;color:#777;display:flex;align-items:center;gap:.5rem}
-        .review__helpful a{color:#555;text-decoration:none;border:1px solid #ccc;border-radius:4px;padding:1px 8px}
+        .review__vote{display:inline;margin:0}
+        .review__vote button{background:none;color:#555;border:1px solid #ccc;border-radius:4px;padding:1px 8px;font-size:.8rem;cursor:pointer}
         .product-reviews__pagination{display:flex;gap:.3rem;align-items:center;margin:1rem 0;flex-wrap:wrap}
         .product-reviews__pagination a,.product-reviews__pagination strong,.product-reviews__pagination span{padding:2px 9px;border:1px solid #ddd;border-radius:4px;text-decoration:none;color:#555;font-size:.85rem}
         .product-reviews__pagination strong{background:#f5a623;border-color:#f5a623;color:#222}
@@ -92,8 +93,8 @@
             <% if $VotesEnabled %>
                 <p class="review__helpful">
                     <span><%t SilverShop\Reviews.Helpful "Was this helpful?" %></span>
-                    <a href="{$BaseHref}review-vote/$ID/up" rel="nofollow">&#128077; $HelpfulUp</a>
-                    <a href="{$BaseHref}review-vote/$ID/down" rel="nofollow">&#128078; $HelpfulDown</a>
+                    <form method="post" action="{$BaseHref}review-vote/$ID/up" class="review__vote">$VoteSecurityField<button type="submit">&#128077; $HelpfulUp</button></form>
+                    <form method="post" action="{$BaseHref}review-vote/$ID/down" class="review__vote">$VoteSecurityField<button type="submit">&#128078; $HelpfulDown</button></form>
                 </p>
             <% end_if %>
         </article>

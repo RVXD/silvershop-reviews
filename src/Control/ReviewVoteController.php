@@ -8,6 +8,7 @@ use SilverShop\Reviews\Model\Review;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\HTTPRequest;
+use SilverStripe\Security\SecurityToken;
 
 /**
  * Records "was this review helpful?" votes. One vote per review per session (basic dedup); the vote links
@@ -35,6 +36,13 @@ class ReviewVoteController extends Controller
         if (!Review::config()->get('allow_reviews') || !Review::config()->get('allow_votes')) {
             return $this->httpError(404);
         }
+        // Voting changes state: require POST + a valid CSRF token (defends against forged votes).
+        if (!$request->isPOST()) {
+            return $this->httpError(404);
+        }
+        if (!SecurityToken::inst()->checkRequest($request)) {
+            return $this->httpError(400);
+        }
 
         $id = (int) $request->param('ReviewID');
         $direction = (string) $request->param('Direction');
@@ -61,10 +69,7 @@ class ReviewVoteController extends Controller
             $session->set('ReviewVotes', $voted);
         }
 
-        if ($back = $this->getBackURL() ?: $request->getHeader('Referer')) {
-            return $this->redirect($back);
-        }
-
+        // redirectBack() validates the Referer with Director::is_site_url (no open redirect).
         return $this->redirectBack();
     }
 }

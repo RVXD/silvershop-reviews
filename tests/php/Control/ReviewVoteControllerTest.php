@@ -23,11 +23,11 @@ class ReviewVoteControllerTest extends FunctionalTest
     {
         $review = $this->approvedReview();
 
-        $this->get('review-vote/' . $review->ID . '/up');
+        $this->post('review-vote/' . $review->ID . '/up', []);
         $this->assertSame(1, (int) Review::get()->byID($review->ID)->HelpfulUp);
 
         // Same session → deduped, stays at 1.
-        $this->get('review-vote/' . $review->ID . '/up');
+        $this->post('review-vote/' . $review->ID . '/up', []);
         $this->assertSame(1, (int) Review::get()->byID($review->ID)->HelpfulUp);
     }
 
@@ -35,8 +35,17 @@ class ReviewVoteControllerTest extends FunctionalTest
     {
         $review = $this->approvedReview();
 
-        $this->get('review-vote/' . $review->ID . '/down');
+        $this->post('review-vote/' . $review->ID . '/down', []);
         $this->assertSame(1, (int) Review::get()->byID($review->ID)->HelpfulDown);
+    }
+
+    public function testGetRequestIsRejected(): void
+    {
+        $review = $this->approvedReview();
+
+        // Voting must be POST (CSRF-safe); a GET changes nothing and 404s.
+        $this->assertSame(404, $this->get('review-vote/' . $review->ID . '/up')->getStatusCode());
+        $this->assertSame(0, (int) Review::get()->byID($review->ID)->HelpfulUp);
     }
 
     public function testUnapprovedReviewCannotBeVoted(): void
@@ -46,14 +55,14 @@ class ReviewVoteControllerTest extends FunctionalTest
         $review->Approved = false;
         $review->write();
 
-        $this->assertSame(404, $this->get('review-vote/' . $review->ID . '/up')->getStatusCode());
+        $this->assertSame(404, $this->post('review-vote/' . $review->ID . '/up', [])->getStatusCode());
     }
 
     public function testInvalidDirectionIs404(): void
     {
         $review = $this->approvedReview();
 
-        $this->assertSame(404, $this->get('review-vote/' . $review->ID . '/sideways')->getStatusCode());
+        $this->assertSame(404, $this->post('review-vote/' . $review->ID . '/sideways', [])->getStatusCode());
     }
 
     public function testVotingDisabledIs404(): void
@@ -61,7 +70,7 @@ class ReviewVoteControllerTest extends FunctionalTest
         Config::modify()->set(Review::class, 'allow_votes', false);
         $review = $this->approvedReview();
 
-        $this->assertSame(404, $this->get('review-vote/' . $review->ID . '/up')->getStatusCode());
+        $this->assertSame(404, $this->post('review-vote/' . $review->ID . '/up', [])->getStatusCode());
     }
 
     public function testReviewsDisabledBlocksVoting(): void
@@ -69,6 +78,6 @@ class ReviewVoteControllerTest extends FunctionalTest
         Config::modify()->set(Review::class, 'allow_reviews', false);
         $review = $this->approvedReview();
 
-        $this->assertSame(404, $this->get('review-vote/' . $review->ID . '/up')->getStatusCode());
+        $this->assertSame(404, $this->post('review-vote/' . $review->ID . '/up', [])->getStatusCode());
     }
 }
