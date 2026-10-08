@@ -22,3 +22,19 @@ SilverShop\Reviews\Model\Review:
   who_can_review: 'anyone'
   # Minimum seconds between review submissions from one session (basic anti-spam throttle).
   submit_throttle_seconds: 30
+
+# External review providers (v4). Adapters are registered here; pick the active one on your site and set its
+# credentials. 'active' empty = native reviews only. Each adapter is inert until its API keys are configured.
+SilverShop\Reviews\Provider\ReviewProviderRegistry:
+  active: ''
+  providers:
+    trustpilot: '%$SilverShop\Reviews\Provider\TrustpilotProvider'
+    kiyoh: '%$SilverShop\Reviews\Provider\KiyohProvider'
+    feedbackcompany: '%$SilverShop\Reviews\Provider\FeedbackCompanyProvider'
+    demo: '%$SilverShop\Reviews\Provider\DemoReviewProvider'
+
+SilverStripe\Core\Injector\Injector:
+  Psr\SimpleCache\CacheInterface.reviewsProvider:
+    factory: SilverStripe\Core\Cache\CacheFactory
+    constructor:
+      namespace: reviewsProvider

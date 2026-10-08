@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace SilverShop\Reviews\Extension;
 
 use SilverShop\Reviews\Model\Review;
+use SilverShop\Reviews\Provider\ProviderRating;
+use SilverShop\Reviews\Provider\ReviewProviderRegistry;
 use SilverStripe\Control\Director;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
@@ -105,6 +107,16 @@ class ShopReviewExtension extends Extension
         $html->setValue('<script type="application/ld+json">' . $json . '</script>');
 
         return $html;
+    }
+
+    /**
+     * The store's rating at the active external review provider, or null.
+     */
+    public function ProviderShopRating(): ?ProviderRating
+    {
+        $provider = ReviewProviderRegistry::create()->forShopRating();
+
+        return $provider ? $provider->getShopRating() : null;
     }
 
     public function updateCMSFields(FieldList $fields): void

@@ -23,6 +23,17 @@
 
     <h2><%t SilverShop\Reviews.Heading "Reviews" %></h2>
 
+    <% if $ProviderRating %>
+        <% with $ProviderRating %>
+            <p class="product-reviews__provider" style="color:#555;font-size:.9rem;margin:.25rem 0 1rem;">
+                <span style="color:#f5a623;letter-spacing:1px;">$StarsString</span>
+                <strong>$RatingValue</strong>/5
+                &middot; <%t SilverShop\Reviews.ProviderCount "{count} reviews on {provider}" count=$ReviewCount provider=$ProviderName %><% if $Url %>
+                &middot; <a href="$Url" rel="nofollow noopener" target="_blank"><%t SilverShop\Reviews.ViewOnProvider "view" %></a><% end_if %>
+            </p>
+        <% end_with %>
+    <% end_if %>
+
     <% if $HasReviews %>
         <div class="product-reviews__summary">
             <span class="product-reviews__avg">$AverageRating</span>

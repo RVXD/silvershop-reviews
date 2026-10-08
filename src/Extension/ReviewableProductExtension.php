@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace SilverShop\Reviews\Extension;
 
 use SilverShop\Reviews\Model\Review;
+use SilverShop\Reviews\Provider\ProviderRating;
+use SilverShop\Reviews\Provider\ReviewProviderRegistry;
 use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;
@@ -172,6 +174,20 @@ class ReviewableProductExtension extends Extension
         $html->setValue('<script type="application/ld+json">' . $json . '</script>');
 
         return $html;
+    }
+
+    /**
+     * This product's rating at the active external review provider (by SKU / InternalItemID), or null.
+     */
+    public function ProviderRating(): ?ProviderRating
+    {
+        $provider = ReviewProviderRegistry::create()->forProductRating();
+        if (!$provider) {
+            return null;
+        }
+        $sku = (string) $this->getOwner()->InternalItemID;
+
+        return $sku !== '' ? $provider->getProductRating($sku) : null;
     }
 
     public function updateCMSFields(FieldList $fields): void

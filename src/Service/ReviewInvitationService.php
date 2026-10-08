@@ -6,6 +6,7 @@ namespace SilverShop\Reviews\Service;
 
 use SilverShop\Model\Order;
 use SilverShop\Reviews\Model\ReviewInvitation;
+use SilverShop\Reviews\Provider\ReviewProviderRegistry;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Configurable;
@@ -104,6 +105,10 @@ class ReviewInvitationService
     public function sendReminders(): int
     {
         if (!static::config()->get('reminder_enabled')) {
+            return 0;
+        }
+        // When a provider handles invitations, it also handles its own reminders.
+        if (ReviewProviderRegistry::create()->forInvitations()) {
             return 0;
         }
 
@@ -231,6 +236,12 @@ class ReviewInvitationService
         $order = $invitation->Order();
         if (!$order || !$order->exists() || !$order->getLatestEmail()) {
             return false;
+        }
+
+        // If an external provider handles invitations, hand the order off to it instead of our own email.
+        $provider = ReviewProviderRegistry::create()->forInvitations();
+        if ($provider) {
+            return $provider->sendInvitation($order);
         }
 
         try {
