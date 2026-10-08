@@ -8,7 +8,9 @@ use SilverShop\Reviews\Model\ProductQuestion;
 use SilverShop\Reviews\Model\Review;
 use SilverShop\Reviews\Provider\ProviderRating;
 use SilverShop\Reviews\Provider\ReviewProviderRegistry;
+use SilverStripe\Control\Controller;
 use SilverStripe\Core\Extension;
+use SilverStripe\Model\List\PaginatedList;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
@@ -77,6 +79,18 @@ class ReviewableProductExtension extends Extension
     public function HasReviews(): bool
     {
         return $this->ApprovedReviews()->exists();
+    }
+
+    /**
+     * Approved reviews as a paginated list (page size from `Review.reviews_per_page`, 0 = all), for the
+     * product page. Reads the `start` GET var from the current request.
+     */
+    public function PaginatedReviews(): PaginatedList
+    {
+        $list = PaginatedList::create($this->ApprovedReviews(), Controller::curr()->getRequest());
+        $list->setPageLength(max(0, (int) Review::config()->get('reviews_per_page')));
+
+        return $list;
     }
 
     public function RatingCount(): int

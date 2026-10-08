@@ -22,6 +22,9 @@
         .review__photos img{border-radius:4px;object-fit:cover}
         .review__helpful{margin:.5rem 0 0;font-size:.8rem;color:#777;display:flex;align-items:center;gap:.5rem}
         .review__helpful a{color:#555;text-decoration:none;border:1px solid #ccc;border-radius:4px;padding:1px 8px}
+        .product-reviews__pagination{display:flex;gap:.3rem;align-items:center;margin:1rem 0;flex-wrap:wrap}
+        .product-reviews__pagination a,.product-reviews__pagination strong,.product-reviews__pagination span{padding:2px 9px;border:1px solid #ddd;border-radius:4px;text-decoration:none;color:#555;font-size:.85rem}
+        .product-reviews__pagination strong{background:#f5a623;border-color:#f5a623;color:#222}
         .product-reviews__form{margin-top:1.5rem;max-width:520px}
         .product-qna{margin-top:2rem;border-top:1px solid #e2e2e2;padding-top:1.25rem}
         .qna__item{border-top:1px solid #eee;padding:.8rem 0}
@@ -70,7 +73,7 @@
         <p><%t SilverShop\Reviews.None "No reviews yet. Be the first to review this product." %></p>
     <% end_if %>
 
-    <% loop $ApprovedReviews %>
+    <% loop $PaginatedReviews %>
         <article class="review">
             <header>
                 <span class="review__stars" aria-label="$Rating / 5">$StarsString</span>
@@ -95,6 +98,18 @@
             <% end_if %>
         </article>
     <% end_loop %>
+
+    <% with $PaginatedReviews %>
+        <% if $MoreThanOnePage %>
+            <nav class="product-reviews__pagination" aria-label="Reviews pages">
+                <% if $NotFirstPage %><a href="{$PrevLink}#reviews" rel="prev">&laquo;</a><% end_if %>
+                <% loop $PaginationSummary(4) %>
+                    <% if $CurrentBool %><strong>$PageNum</strong><% else_if $Link %><a href="{$Link}#reviews">$PageNum</a><% else %><span>&hellip;</span><% end_if %>
+                <% end_loop %>
+                <% if $NotLastPage %><a href="{$NextLink}#reviews" rel="next">&raquo;</a><% end_if %>
+            </nav>
+        <% end_if %>
+    <% end_with %>
 
     <div class="product-reviews__form">
         <% if $CanReview %>

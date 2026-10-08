@@ -76,6 +76,11 @@ class Review extends DataObject
      */
     private static int $max_photos = 3;
 
+    /**
+     * Reviews shown per page on the product page (0 = show all, no pagination).
+     */
+    private static int $reviews_per_page = 10;
+
     private static array $db = [
         'Rating' => 'Int',
         'Title' => 'Varchar(255)',

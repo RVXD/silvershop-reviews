@@ -79,6 +79,7 @@ SilverShop\Reviews\Model\Review:
   allow_votes: true          # helpful 👍/👎 votes
   allow_photos: true         # photo uploads on reviews
   max_photos: 3
+  reviews_per_page: 10       # reviews per page on the product page (0 = show all, no pagination)
 
 SilverShop\Reviews\Model\ProductQuestion:
   allow_qna: true            # master switch for the whole Q&A section

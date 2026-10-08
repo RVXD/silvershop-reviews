@@ -4,6 +4,7 @@ namespace SilverShop\Reviews\Tests\Extension;
 
 use SilverShop\Reviews\Extension\ReviewableProductExtension;
 use SilverShop\Reviews\Model\Review;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Dev\TestOnly;
 use SilverStripe\ORM\DataObject;
@@ -47,6 +48,23 @@ class ReviewableAggregatesTest extends SapphireTest
         $this->assertFalse($subject->HasReviews());
         $this->assertSame(0, $subject->RatingCount());
         $this->assertSame(0.0, $subject->AverageRating());
+    }
+
+    public function testPaginatedReviewsRespectsPageSize(): void
+    {
+        $subject = ReviewableTestObject::create();
+        $subject->write();
+        for ($i = 0; $i < 5; $i++) {
+            $this->makeReview($subject, 5, true);
+        }
+
+        Config::modify()->set(Review::class, 'reviews_per_page', 2);
+        $subject = ReviewableTestObject::get()->byID($subject->ID);
+
+        $paginated = $subject->PaginatedReviews();
+        $this->assertSame(2, $paginated->getPageLength(), 'page size comes from config');
+        $this->assertSame(5, (int) $paginated->getTotalItems(), 'all approved reviews are in the list');
+        $this->assertSame(2, $paginated->count(), 'the first page holds one page-worth');
     }
 
     private function makeReview(DataObject $subject, int $rating, bool $approved): void

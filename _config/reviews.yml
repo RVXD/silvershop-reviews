@@ -28,6 +28,8 @@ SilverShop\Reviews\Model\Review:
   allow_votes: true
   allow_photos: true
   max_photos: 3
+  # Reviews shown per page on the product page (0 = show all, no pagination).
+  reviews_per_page: 10
 
 SilverShop\Reviews\Model\ProductQuestion:
   # Master switch for the whole Q&A feature (list + ask form). Set false to hide Q&A entirely.
