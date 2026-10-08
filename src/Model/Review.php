@@ -7,6 +7,8 @@ namespace SilverShop\Reviews\Model;
 use SilverShop\Model\Order;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
@@ -54,6 +56,21 @@ class Review extends DataObject
      */
     private static int $submit_throttle_seconds = 30;
 
+    /**
+     * Allow customers to vote reviews helpful / not helpful.
+     */
+    private static bool $allow_votes = true;
+
+    /**
+     * Allow photo uploads with reviews.
+     */
+    private static bool $allow_photos = true;
+
+    /**
+     * Maximum photos per review.
+     */
+    private static int $max_photos = 3;
+
     private static array $db = [
         'Rating' => 'Int',
         'Title' => 'Varchar(255)',
@@ -62,12 +79,22 @@ class Review extends DataObject
         'AuthorEmail' => 'Varchar(255)',
         'Approved' => 'Boolean',
         'Verified' => 'Boolean',
+        'HelpfulUp' => 'Int',
+        'HelpfulDown' => 'Int',
     ];
 
     private static array $has_one = [
         'Subject' => DataObject::class, // polymorphic: Product (v1), SiteConfig / Variation (later)
         'Member' => Member::class,
         'Order' => Order::class,
+    ];
+
+    private static array $has_many = [
+        'Images' => ReviewImage::class . '.Review',
+    ];
+
+    private static array $cascade_deletes = [
+        'Images',
     ];
 
     private static array $defaults = [
@@ -142,6 +169,19 @@ class Review extends DataObject
             $verified->setDescription(_t(self::class . '.VerifiedDesc', 'Set automatically when the reviewer purchased this product.'));
         }
 
+        foreach (['HelpfulUp', 'HelpfulDown'] as $voteField) {
+            $fields->dataFieldByName($voteField)?->setReadonly(true);
+        }
+
+        if ($this->exists()) {
+            $fields->addFieldToTab('Root.Photos', GridField::create(
+                'Images',
+                _t(self::class . '.Photos', 'Photos'),
+                $this->Images(),
+                GridFieldConfig_RecordEditor::create()
+            ));
+        }
+
         return $fields;
     }
 
@@ -153,6 +193,24 @@ class Review extends DataObject
         $rating = max(0, min(5, (int) $this->Rating));
 
         return str_repeat('★', $rating) . str_repeat('☆', 5 - $rating);
+    }
+
+    public function HasImages(): bool
+    {
+        return $this->Images()->exists();
+    }
+
+    /**
+     * Net helpfulness (up minus down votes), for sorting/display.
+     */
+    public function getHelpfulScore(): int
+    {
+        return (int) $this->HelpfulUp - (int) $this->HelpfulDown;
+    }
+
+    public function VotesEnabled(): bool
+    {
+        return (bool) self::config()->get('allow_votes');
     }
 
     public function canView($member = null): bool

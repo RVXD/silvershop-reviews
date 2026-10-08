@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Reviews\Extension;
 
+use SilverShop\Reviews\Model\ProductQuestion;
 use SilverShop\Reviews\Model\Review;
 use SilverShop\Reviews\Provider\ProviderRating;
 use SilverShop\Reviews\Provider\ReviewProviderRegistry;
@@ -28,11 +29,26 @@ class ReviewableProductExtension extends Extension
 {
     private static array $has_many = [
         'Reviews' => Review::class . '.Subject',
+        'Questions' => ProductQuestion::class . '.Subject',
     ];
 
     private static array $cascade_deletes = [
         'Reviews',
+        'Questions',
     ];
+
+    /**
+     * Approved customer questions for this product, newest first.
+     */
+    public function ApprovedQuestions(): \SilverStripe\ORM\DataList
+    {
+        return $this->getOwner()->Questions()->filter('Approved', true);
+    }
+
+    public function HasQuestions(): bool
+    {
+        return $this->ApprovedQuestions()->exists();
+    }
 
     /**
      * Approved reviews for this product, newest first — the list shown on the storefront.

@@ -6,3 +6,4 @@ SilverStripe\Control\Director:
   rules:
     'review': 'SilverShop\Reviews\Control\ReviewInvitationController'
     'shop-review': 'SilverShop\Reviews\Control\ShopReviewController'
+    'review-vote': 'SilverShop\Reviews\Control\ReviewVoteController'

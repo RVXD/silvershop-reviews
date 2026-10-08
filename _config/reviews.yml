@@ -22,6 +22,15 @@ SilverShop\Reviews\Model\Review:
   who_can_review: 'anyone'
   # Minimum seconds between review submissions from one session (basic anti-spam throttle).
   submit_throttle_seconds: 30
+  # Helpful votes + photo uploads on reviews (v5).
+  allow_votes: true
+  allow_photos: true
+  max_photos: 3
+
+SilverShop\Reviews\Model\ProductQuestion:
+  # Questions are hidden until approved; who_can_ask: 'anyone' | 'members'.
+  moderation: true
+  who_can_ask: 'anyone'
 
 # External review providers (v4). Adapters are registered here; pick the active one on your site and set its
 # credentials. 'active' empty = native reviews only. Each adapter is inert until its API keys are configured.

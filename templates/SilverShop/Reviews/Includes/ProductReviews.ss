@@ -18,7 +18,16 @@
         .review__title{margin:.4rem 0 .2rem;font-size:1.05rem}
         .review__meta{margin:0 0 .4rem;font-size:.8rem;color:#888}
         .review__body{white-space:pre-line}
+        .review__photos{display:flex;gap:.4rem;margin:.6rem 0;flex-wrap:wrap}
+        .review__photos img{border-radius:4px;object-fit:cover}
+        .review__helpful{margin:.5rem 0 0;font-size:.8rem;color:#777;display:flex;align-items:center;gap:.5rem}
+        .review__helpful a{color:#555;text-decoration:none;border:1px solid #ccc;border-radius:4px;padding:1px 8px}
         .product-reviews__form{margin-top:1.5rem;max-width:520px}
+        .product-qna{margin-top:2rem;border-top:1px solid #e2e2e2;padding-top:1.25rem}
+        .qna__item{border-top:1px solid #eee;padding:.8rem 0}
+        .qna__q{font-weight:600}
+        .qna__a{margin:.3rem 0 0 1rem;padding-left:.6rem;border-left:2px solid #eee}
+        .qna__staff{font-size:.75rem;color:#2e7d32;font-weight:600;margin-left:.4rem}
     </style>
 
     <h2><%t SilverShop\Reviews.Heading "Reviews" %></h2>
@@ -69,6 +78,20 @@
             <% if $Title %><h3 class="review__title">$Title</h3><% end_if %>
             <p class="review__meta">$AuthorName &middot; $Created.Nice</p>
             <div class="review__body">$Content</div>
+
+            <% if $HasImages %>
+                <div class="review__photos">
+                    <% loop $Images %><% if $Thumbnail %>$Thumbnail<% end_if %><% end_loop %>
+                </div>
+            <% end_if %>
+
+            <% if $VotesEnabled %>
+                <p class="review__helpful">
+                    <span><%t SilverShop\Reviews.Helpful "Was this helpful?" %></span>
+                    <a href="{$BaseHref}review-vote/$ID/up" rel="nofollow">&#128077; $HelpfulUp</a>
+                    <a href="{$BaseHref}review-vote/$ID/down" rel="nofollow">&#128078; $HelpfulDown</a>
+                </p>
+            <% end_if %>
         </article>
     <% end_loop %>
 
@@ -78,6 +101,30 @@
             $ReviewForm
         <% else %>
             <p class="review-gate">$ReviewGateMessage</p>
+        <% end_if %>
+    </div>
+
+    <div class="product-qna" id="questions">
+        <h2><%t SilverShop\Reviews.QnaHeading "Questions &amp; answers" %></h2>
+
+        <% if $HasQuestions %>
+            <% loop $ApprovedQuestions %>
+                <div class="qna__item">
+                    <p class="qna__q">$Question</p>
+                    <% loop $ApprovedAnswers %>
+                        <div class="qna__a">$Answer<% if $IsStaff %><span class="qna__staff"><%t SilverShop\Reviews.StaffAnswer "Shop" %></span><% end_if %></div>
+                    <% end_loop %>
+                </div>
+            <% end_loop %>
+        <% else %>
+            <p><%t SilverShop\Reviews.NoQuestions "No questions yet. Ask the first one." %></p>
+        <% end_if %>
+
+        <% if $CanAsk %>
+            <div class="product-reviews__form">
+                <h3><%t SilverShop\Reviews.AskHeading "Ask a question" %></h3>
+                $QuestionForm
+            </div>
         <% end_if %>
     </div>
 </section>

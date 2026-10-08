@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Reviews\Admin;
 
+use SilverShop\Reviews\Model\ProductQuestion;
 use SilverShop\Reviews\Model\Review;
 use SilverShop\Reviews\Model\ReviewInvitation;
 use SilverStripe\Admin\ModelAdmin;
@@ -16,6 +17,7 @@ class ReviewsAdmin extends ModelAdmin
 {
     private static array $managed_models = [
         Review::class,
+        ProductQuestion::class,
         ReviewInvitation::class,
     ];
 
