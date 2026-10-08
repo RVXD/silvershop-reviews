@@ -29,7 +29,8 @@
     },
     "suggest": {
         "silvershop/store-profile": "Shared shop identity used as the sender for review-invitation emails (v2).",
-        "silverstripe/queuedjobs": "Scheduled review-invitation emails after an order is fulfilled (v2)."
+        "silverstripe/queuedjobs": "Scheduled review-invitation emails after an order is fulfilled (v2).",
+        "silverstripe/spamprotection": "Pluggable spam protection (reCAPTCHA/hCaptcha/...) auto-enabled on the public forms."
     },
     "scripts": {
         "test": "vendor/bin/phpunit",

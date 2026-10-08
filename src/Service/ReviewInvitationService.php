@@ -10,6 +10,7 @@ use SilverShop\Reviews\Provider\ReviewProviderRegistry;
 use SilverStripe\Control\Director;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Configurable;
+use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Model\ArrayData;
 use SilverStripe\Model\List\ArrayList;
@@ -25,6 +26,7 @@ use SilverStripe\SiteConfig\SiteConfig;
 class ReviewInvitationService
 {
     use Configurable;
+    use Extensible;
     use Injectable;
 
     /**
@@ -220,7 +222,7 @@ class ReviewInvitationService
     {
         $order = $invitation->Order();
 
-        return ArrayData::create([
+        $data = ArrayData::create([
             'IsReminder' => $isReminder,
             'ShopName' => $this->senderName(),
             'CustomerName' => $order->getLatestEmail(),
@@ -229,6 +231,9 @@ class ReviewInvitationService
             'ReviewLink' => $invitation->Link(),
             'UnsubscribeLink' => $invitation->UnsubscribeLink(),
         ]);
+        $this->extend('updateInvitationEmailData', $data, $invitation, $isReminder);
+
+        return $data;
     }
 
     public function send(ReviewInvitation $invitation, bool $isReminder = false): bool

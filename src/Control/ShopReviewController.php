@@ -102,17 +102,23 @@ class ShopReviewController extends Controller
             $fields->push(EmailField::create('AuthorEmail', _t(self::class . '.AuthorEmail', 'Your email')));
         }
 
-        $fields->push($this->honeypotField());
+        if (Review::HoneypotEnabled()) {
+            $fields->push($this->honeypotField());
+        }
 
         $required = $member ? ['Rating', 'Content'] : ['Rating', 'Content', 'AuthorName', 'AuthorEmail'];
 
-        return Form::create(
+        $form = Form::create(
             $this,
             'ShopReviewForm',
             $fields,
             FieldList::create(FormAction::create('doSubmitShopReview', _t(self::class . '.Submit', 'Submit review'))),
             RequiredFieldsValidator::create($required)
         );
+        Review::applySpamProtection($form);
+        $this->extend('updateShopReviewForm', $form);
+
+        return $form;
     }
 
     public function doSubmitShopReview(array $data, Form $form)
@@ -157,6 +163,7 @@ class ShopReviewController extends Controller
         if ($member) {
             $review->MemberID = $member->ID;
         }
+        $this->extend('updateShopReview', $review, $data);
         $review->write();
 
         $session->set('ShopReviewLastSubmit', time());

@@ -7,6 +7,7 @@ namespace SilverShop\Reviews\Model;
 use SilverShop\Model\Order;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\Form;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\ORM\DataObject;
@@ -60,6 +61,12 @@ class Review extends DataObject
      * Minimum seconds between submissions from one session (basic anti-spam throttle).
      */
     private static int $submit_throttle_seconds = 30;
+
+    /**
+     * Include the built-in hidden honeypot field on the public forms. Turn off if you rely solely on a
+     * real spam protector (silverstripe/spamprotection).
+     */
+    private static bool $use_honeypot = true;
 
     /**
      * Allow customers to vote reviews helpful / not helpful.
@@ -221,6 +228,26 @@ class Review extends DataObject
     public function VotesEnabled(): bool
     {
         return (bool) self::config()->get('allow_votes');
+    }
+
+    public static function HoneypotEnabled(): bool
+    {
+        return (bool) self::config()->get('use_honeypot');
+    }
+
+    /**
+     * Enable silverstripe/spamprotection on a form when it is installed and a protector is configured.
+     * No-op (and never throws) otherwise, so the built-in honeypot/throttle remain the fallback.
+     */
+    public static function applySpamProtection(Form $form): void
+    {
+        if ($form->hasMethod('enableSpamProtection')) {
+            try {
+                $form->enableSpamProtection();
+            } catch (\Exception $e) {
+                // No default spam protector configured — fall back to the honeypot/throttle.
+            }
+        }
     }
 
     public function canView($member = null): bool

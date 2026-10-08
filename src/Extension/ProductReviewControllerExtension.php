@@ -121,7 +121,9 @@ class ProductReviewControllerExtension extends Extension
         }
 
         // Honeypot: real users never see it; bots fill every field.
-        $fields->push($this->honeypotField());
+        if (Review::HoneypotEnabled()) {
+            $fields->push($this->honeypotField());
+        }
 
         $required = $member ? ['Rating', 'Content'] : ['Rating', 'Content', 'AuthorName', 'AuthorEmail'];
 
@@ -134,6 +136,8 @@ class ProductReviewControllerExtension extends Extension
             ),
             RequiredFieldsValidator::create($required)
         );
+        Review::applySpamProtection($form);
+        $this->getOwner()->extend('updateReviewForm', $form);
 
         return $form;
     }
@@ -189,6 +193,7 @@ class ProductReviewControllerExtension extends Extension
         if ($member) {
             $review->MemberID = $member->ID;
         }
+        $this->getOwner()->extend('updateReview', $review, $data);
         $review->write();
 
         $this->saveReviewPhotos($review);
@@ -284,17 +289,23 @@ class ProductReviewControllerExtension extends Extension
             $fields->push(EmailField::create('AuthorEmail', _t(self::class . '.AuthorEmail', 'Your email'))
                 ->setDescription(_t(self::class . '.QEmailPrivate', 'Not published — only used to notify you of an answer.')));
         }
-        $fields->push($this->honeypotField());
+        if (Review::HoneypotEnabled()) {
+            $fields->push($this->honeypotField());
+        }
 
         $required = $member ? ['Question'] : ['Question', 'AuthorName', 'AuthorEmail'];
 
-        return Form::create(
+        $form = Form::create(
             $this->getOwner(),
             'QuestionForm',
             $fields,
             FieldList::create(FormAction::create('doPostQuestion', _t(self::class . '.AskSubmit', 'Ask question'))),
             RequiredFieldsValidator::create($required)
         );
+        Review::applySpamProtection($form);
+        $this->getOwner()->extend('updateQuestionForm', $form);
+
+        return $form;
     }
 
     public function doPostQuestion(array $data, Form $form)
@@ -330,6 +341,7 @@ class ProductReviewControllerExtension extends Extension
         if ($member) {
             $question->MemberID = $member->ID;
         }
+        $this->getOwner()->extend('updateQuestion', $question, $data);
         $question->write();
 
         $message = $moderation

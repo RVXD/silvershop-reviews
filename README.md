@@ -142,6 +142,60 @@ Fetched ratings are cached (`SilverShop\Reviews\Provider\AbstractReviewProvider.
 > Provider endpoints/fields follow each vendor's public docs and should be verified against their current API with
 > a real account before production. All provider calls fail soft (never break page rendering).
 
+## Spam protection
+
+The public forms ship with a hidden **honeypot** + a per-session submission **throttle**
+(`submit_throttle_seconds`). Install [`silverstripe/spamprotection`](https://github.com/silverstripe/silverstripe-spamprotection)
+and configure a protector (reCAPTCHA, hCaptcha, …) and it is **enabled automatically** on every form. Turn the
+built-in honeypot off if you prefer to rely solely on the protector:
+
+```yaml
+SilverShop\Reviews\Model\Review:
+  use_honeypot: false
+```
+
+## Extending
+
+The module fires extension hooks at the logical points, so you can add fields or adjust records without
+overriding templates/controllers. Apply an `Extension` to the relevant class:
+
+| Hook | Fired on | Signature |
+|---|---|---|
+| `updateReviewForm` | `SilverShop\Page\ProductController` | `($form)` |
+| `updateReview` | `SilverShop\Page\ProductController` | `($review, $data)` — before write |
+| `updateQuestionForm` | `SilverShop\Page\ProductController` | `($form)` |
+| `updateQuestion` | `SilverShop\Page\ProductController` | `($question, $data)` — before write |
+| `updateShopReviewForm` | `ShopReviewController` | `($form)` |
+| `updateShopReview` | `ShopReviewController` | `($review, $data)` — before write |
+| `updateReviewInvitationForm` | `ReviewInvitationController` | `($form)` |
+| `updateInvitationReview` | `ReviewInvitationController` | `($review, $order)` — before write |
+| `updateInvitationEmailData` | `ReviewInvitationService` | `($data, $invitation, $isReminder)` |
+
+The models (`Review`, `ProductQuestion`, `ProductAnswer`, …) also support the standard `updateCMSFields` hook and
+any `DataObject` extension (e.g. `onBeforeWrite`).
+
+Example:
+
+```php
+class MyReviewExtension extends SilverStripe\Core\Extension
+{
+    public function updateReviewForm($form)
+    {
+        $form->Fields()->push(SilverStripe\Forms\CheckboxField::create('AgreeTerms', 'I agree to the terms'));
+    }
+    public function updateReview($review, $data)
+    {
+        // ... adjust $review before it is written ...
+    }
+}
+```
+
+```yaml
+SilverShop\Page\ProductController:
+  extensions:
+    - MyReviewExtension
+```
+
 ## Testing
 
 ```bash

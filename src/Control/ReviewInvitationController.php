@@ -104,12 +104,16 @@ class ReviewInvitationController extends Controller
         }
         $fields->push(HiddenField::create('Token', '', $invitation->Token));
 
-        return Form::create(
+        $form = Form::create(
             $this,
             'ReviewInvitationForm',
             $fields,
             FieldList::create(FormAction::create('doSubmitReviews', _t(self::class . '.Submit', 'Submit reviews')))
         );
+        Review::applySpamProtection($form);
+        $this->extend('updateReviewInvitationForm', $form);
+
+        return $form;
     }
 
     public function doSubmitReviews(array $data, Form $form)
@@ -161,6 +165,7 @@ class ReviewInvitationController extends Controller
             if ($member && $member->exists()) {
                 $review->MemberID = $member->ID;
             }
+            $this->extend('updateInvitationReview', $review, $order);
             $review->write();
             $created++;
         }
@@ -189,6 +194,7 @@ class ReviewInvitationController extends Controller
                 if ($member && $member->exists()) {
                     $review->MemberID = $member->ID;
                 }
+                $this->extend('updateInvitationReview', $review, $order);
                 $review->write();
                 $created++;
             }

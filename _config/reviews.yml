@@ -24,6 +24,8 @@ SilverShop\Reviews\Model\Review:
   who_can_review: 'anyone'
   # Minimum seconds between review submissions from one session (basic anti-spam throttle).
   submit_throttle_seconds: 30
+  # Built-in hidden honeypot on the public forms. Turn off if you rely only on silverstripe/spamprotection.
+  use_honeypot: true
   # Helpful votes + photo uploads on reviews (v5).
   allow_votes: true
   allow_photos: true
