@@ -32,7 +32,7 @@ class ReviewVoteController extends Controller
 
     public function vote(HTTPRequest $request)
     {
-        if (!Review::config()->get('allow_votes')) {
+        if (!Review::config()->get('allow_reviews') || !Review::config()->get('allow_votes')) {
             return $this->httpError(404);
         }
 

@@ -51,6 +51,22 @@ class ReviewableProductExtension extends Extension
     }
 
     /**
+     * Master switch: is the reviews feature enabled at all?
+     */
+    public function ReviewsEnabled(): bool
+    {
+        return (bool) Review::config()->get('allow_reviews');
+    }
+
+    /**
+     * Master switch: is the Q&A feature enabled at all?
+     */
+    public function QnaEnabled(): bool
+    {
+        return (bool) ProductQuestion::config()->get('allow_qna');
+    }
+
+    /**
      * Approved reviews for this product, newest first — the list shown on the storefront.
      */
     public function ApprovedReviews(): DataList

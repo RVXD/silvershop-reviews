@@ -56,6 +56,9 @@ class ProductReviewControllerExtension extends Extension
      */
     public function CanReview(): bool
     {
+        if (!Review::config()->get('allow_reviews')) {
+            return false;
+        }
         $member = Security::getCurrentUser();
         switch (Review::config()->get('who_can_review')) {
             case 'members':
@@ -250,6 +253,9 @@ class ProductReviewControllerExtension extends Extension
      */
     public function CanAsk(): bool
     {
+        if (!ProductQuestion::config()->get('allow_qna')) {
+            return false;
+        }
         if (!ProductQuestion::config()->get('who_can_ask')) {
             return false;
         }

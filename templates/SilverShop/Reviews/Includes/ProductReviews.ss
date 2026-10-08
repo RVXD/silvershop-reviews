@@ -30,6 +30,7 @@
         .qna__staff{font-size:.75rem;color:#2e7d32;font-weight:600;margin-left:.4rem}
     </style>
 
+    <% if $ReviewsEnabled %>
     <h2><%t SilverShop\Reviews.Heading "Reviews" %></h2>
 
     <% if $ProviderRating %>
@@ -103,7 +104,9 @@
             <p class="review-gate">$ReviewGateMessage</p>
         <% end_if %>
     </div>
+    <% end_if %>
 
+    <% if $QnaEnabled %>
     <div class="product-qna" id="questions">
         <h2><%t SilverShop\Reviews.QnaHeading "Questions &amp; answers" %></h2>
 
@@ -127,4 +130,5 @@
             </div>
         <% end_if %>
     </div>
+    <% end_if %>
 </section>

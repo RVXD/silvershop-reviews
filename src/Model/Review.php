@@ -42,6 +42,11 @@ class Review extends DataObject
     private static string $plural_name = 'Reviews';
 
     /**
+     * Master switch for the whole reviews feature (list + form + votes). Set false to hide it entirely.
+     */
+    private static bool $allow_reviews = true;
+
+    /**
      * Reviews are hidden until approved by a moderator. Set false (config) to publish on submit.
      */
     private static bool $moderation = true;

@@ -16,6 +16,8 @@ SilverStripe\SiteConfig\SiteConfig:
     - SilverShop\Reviews\Extension\ShopReviewExtension
 
 SilverShop\Reviews\Model\Review:
+  # Master switch for the whole reviews feature (list + form + votes). Set false to hide reviews entirely.
+  allow_reviews: true
   # Reviews are hidden until an admin approves them. Set false to publish immediately.
   moderation: true
   # Who may submit a review: 'anyone' | 'members' | 'verified' (verified = must have purchased the product).
@@ -28,6 +30,8 @@ SilverShop\Reviews\Model\Review:
   max_photos: 3
 
 SilverShop\Reviews\Model\ProductQuestion:
+  # Master switch for the whole Q&A feature (list + ask form). Set false to hide Q&A entirely.
+  allow_qna: true
   # Questions are hidden until approved; who_can_ask: 'anyone' | 'members'.
   moderation: true
   who_can_ask: 'anyone'

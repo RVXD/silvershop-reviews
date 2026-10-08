@@ -35,6 +35,11 @@ class ProductQuestion extends DataObject
     private static string $plural_name = 'Questions';
 
     /**
+     * Master switch for the whole Q&A feature (list + ask form). Set false to hide it entirely.
+     */
+    private static bool $allow_qna = true;
+
+    /**
      * Questions are hidden until approved. Set false (config) to publish on submit.
      */
     private static bool $moderation = true;

@@ -3,6 +3,7 @@
 namespace SilverShop\Reviews\Tests\Control;
 
 use SilverShop\Reviews\Model\Review;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\FunctionalTest;
 
 class ReviewVoteControllerTest extends FunctionalTest
@@ -53,5 +54,21 @@ class ReviewVoteControllerTest extends FunctionalTest
         $review = $this->approvedReview();
 
         $this->assertSame(404, $this->get('review-vote/' . $review->ID . '/sideways')->getStatusCode());
+    }
+
+    public function testVotingDisabledIs404(): void
+    {
+        Config::modify()->set(Review::class, 'allow_votes', false);
+        $review = $this->approvedReview();
+
+        $this->assertSame(404, $this->get('review-vote/' . $review->ID . '/up')->getStatusCode());
+    }
+
+    public function testReviewsDisabledBlocksVoting(): void
+    {
+        Config::modify()->set(Review::class, 'allow_reviews', false);
+        $review = $this->approvedReview();
+
+        $this->assertSame(404, $this->get('review-vote/' . $review->ID . '/up')->getStatusCode());
     }
 }
