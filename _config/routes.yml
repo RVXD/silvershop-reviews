@@ -1,0 +1,7 @@
+---
+Name: silvershop-reviews-routes
+After: '#rootroutes'
+---
+SilverStripe\Control\Director:
+  rules:
+    'review': 'SilverShop\Reviews\Control\ReviewInvitationController'
