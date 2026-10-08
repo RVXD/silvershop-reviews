@@ -216,7 +216,9 @@ class ReviewableProductExtension extends Extension
             ];
         }
 
-        $json = json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        // JSON_HEX_TAG|JSON_HEX_AMP escape < > & so user content (title/body/author) can't break out of
+        // the <script> block (stored XSS).
+        $json = json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP);
         $html->setValue('<script type="application/ld+json">' . $json . '</script>');
 
         return $html;

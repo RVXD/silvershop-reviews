@@ -84,6 +84,11 @@ class Review extends DataObject
     private static int $max_photos = 3;
 
     /**
+     * Maximum size per uploaded photo (PHP size string, e.g. '2m'). Caps anonymous uploads.
+     */
+    private static string $max_photo_size = '2m';
+
+    /**
      * Reviews shown per page on the product page (0 = show all, no pagination).
      */
     private static int $reviews_per_page = 10;

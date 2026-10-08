@@ -103,7 +103,8 @@ class ShopReviewExtension extends Extension
             ],
         ];
 
-        $json = json_encode($schema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+        // JSON_HEX_TAG|JSON_HEX_AMP escape < > & so the content can't break out of the <script> block.
+        $json = json_encode($schema, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG | JSON_HEX_AMP);
         $html->setValue('<script type="application/ld+json">' . $json . '</script>');
 
         return $html;

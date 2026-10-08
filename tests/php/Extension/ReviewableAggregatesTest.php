@@ -67,6 +67,26 @@ class ReviewableAggregatesTest extends SapphireTest
         $this->assertSame(2, $paginated->count(), 'the first page holds one page-worth');
     }
 
+    public function testSchemaOrgNeutralisesScriptBreakout(): void
+    {
+        $subject = ReviewableTestObject::create();
+        $subject->write();
+
+        $review = Review::create();
+        $review->Rating = 5;
+        $review->Approved = true;
+        $review->Title = '</script><script>alert(1)</script>';
+        $review->Content = 'payload';
+        $review->SubjectID = $subject->ID;
+        $review->SubjectClass = $subject->ClassName;
+        $review->write();
+
+        $html = (string) ReviewableTestObject::get()->byID($subject->ID)->ReviewsSchemaOrg();
+
+        $this->assertStringNotContainsString('<script>alert(1)', $html, 'the injected <script> is neutralised');
+        $this->assertStringContainsString('<', $html, 'angle brackets are hex-escaped in the JSON-LD');
+    }
+
     private function makeReview(DataObject $subject, int $rating, bool $approved): void
     {
         $review = Review::create();

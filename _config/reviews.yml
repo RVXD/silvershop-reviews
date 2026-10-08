@@ -30,6 +30,7 @@ SilverShop\Reviews\Model\Review:
   allow_votes: true
   allow_photos: true
   max_photos: 3
+  max_photo_size: '2m'       # max size per uploaded photo (caps anonymous uploads)
   # Reviews shown per page on the product page (0 = show all, no pagination).
   reviews_per_page: 10
 

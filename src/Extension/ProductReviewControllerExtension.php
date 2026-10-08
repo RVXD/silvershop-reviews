@@ -228,6 +228,7 @@ class ProductReviewControllerExtension extends Extension
             $upload = Upload::create();
             $validator = Upload_Validator::create();
             $validator->setAllowedExtensions(['jpg', 'jpeg', 'png', 'gif', 'webp']);
+            $validator->setAllowedMaxFileSize((string) Review::config()->get('max_photo_size'));
             $upload->setValidator($validator);
 
             if ($upload->loadIntoFile($tmp, $image, 'review-photos')) {

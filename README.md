@@ -79,6 +79,7 @@ SilverShop\Reviews\Model\Review:
   allow_votes: true          # helpful 👍/👎 votes
   allow_photos: true         # photo uploads on reviews
   max_photos: 3
+  max_photo_size: '2m'       # max size per uploaded photo
   reviews_per_page: 10       # reviews per page on the product page (0 = show all, no pagination)
 
 SilverShop\Reviews\Model\ProductQuestion:
