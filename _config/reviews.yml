@@ -1,0 +1,20 @@
+---
+Name: silvershop-reviews
+After:
+  - '#silvershop'
+---
+SilverShop\Page\Product:
+  extensions:
+    - SilverShop\Reviews\Extension\ReviewableProductExtension
+
+SilverShop\Page\ProductController:
+  extensions:
+    - SilverShop\Reviews\Extension\ProductReviewControllerExtension
+
+SilverShop\Reviews\Model\Review:
+  # Reviews are hidden until an admin approves them. Set false to publish immediately.
+  moderation: true
+  # Who may submit a review: 'anyone' | 'members' | 'verified' (verified = must have purchased the product).
+  who_can_review: 'anyone'
+  # Minimum seconds between review submissions from one session (basic anti-spam throttle).
+  submit_throttle_seconds: 30
