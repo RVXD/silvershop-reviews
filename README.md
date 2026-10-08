@@ -30,6 +30,13 @@ inside the product scope:
 This renders the rating summary, review list (with photos + helpful votes), the "write a review" form, and the
 Q&A section. The template is self-styled; override it by copying it into your theme.
 
+For the common pattern of a compact rating snippet just below the product title (stars + average + review count,
+linking down to the reviews), add this under your `<h1>` — it renders nothing until the product has a review:
+
+```ss
+<% include SilverShop\Reviews\ProductRatingSummary %>
+```
+
 Optional drop-ins:
 
 ```ss
