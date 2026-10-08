@@ -12,7 +12,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
 use SilverStripe\Forms\FormAction;
 use SilverStripe\Forms\HiddenField;
-use SilverStripe\Forms\RequiredFields;
+use SilverStripe\Forms\Validation\RequiredFieldsValidator;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Security\Member;
@@ -116,7 +116,7 @@ class ProductReviewControllerExtension extends Extension
             FieldList::create(
                 FormAction::create('doPostReview', _t(self::class . '.Submit', 'Submit review'))
             ),
-            RequiredFields::create($required)
+            RequiredFieldsValidator::create($required)
         );
 
         return $form;
