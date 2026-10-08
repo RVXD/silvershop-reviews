@@ -83,7 +83,7 @@ class FeedbackCompanyProvider extends AbstractReviewProvider
             return null;
         }
 
-        return new ProviderRating(((float) $avg10) / 2, (int) ($summary['total_reviews'] ?? ($summary['amount'] ?? 0)), (string) ($summary['url'] ?? ''), $this->getName());
+        return ProviderRating::create(((float) $avg10) / 2, (int) ($summary['total_reviews'] ?? ($summary['amount'] ?? 0)), (string) ($summary['url'] ?? ''), $this->getName());
     }
 
     public function getProductRating(string $sku): ?ProviderRating
@@ -106,7 +106,7 @@ class FeedbackCompanyProvider extends AbstractReviewProvider
             return null;
         }
 
-        return new ProviderRating(((float) $avg10) / 2, (int) ($summary['total_reviews'] ?? 0), '', $this->getName());
+        return ProviderRating::create(((float) $avg10) / 2, (int) ($summary['total_reviews'] ?? 0), '', $this->getName());
     }
 
     public function sendInvitation(Order $order): bool

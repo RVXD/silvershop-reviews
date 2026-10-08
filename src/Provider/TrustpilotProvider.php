@@ -81,7 +81,7 @@ class TrustpilotProvider extends AbstractReviewProvider
         }
         $count = (int) ($data['numberOfReviews']['total'] ?? 0);
 
-        return new ProviderRating((float) $score, $count, (string) ($data['profileUrl'] ?? ''), $this->getName());
+        return ProviderRating::create((float) $score, $count, (string) ($data['profileUrl'] ?? ''), $this->getName());
     }
 
     public function getProductRating(string $sku): ?ProviderRating
@@ -104,7 +104,7 @@ class TrustpilotProvider extends AbstractReviewProvider
             return null;
         }
 
-        return new ProviderRating((float) $stars, (int) ($summary['numberOfReviews'] ?? 0), '', $this->getName());
+        return ProviderRating::create((float) $stars, (int) ($summary['numberOfReviews'] ?? 0), '', $this->getName());
     }
 
     public function sendInvitation(Order $order): bool

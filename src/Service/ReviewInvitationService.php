@@ -245,7 +245,8 @@ class ReviewInvitationService
         }
 
         try {
-            return (bool) $this->buildEmail($invitation, $isReminder)->send();
+            $this->buildEmail($invitation, $isReminder)->send();
+            return true;
         } catch (\Throwable $e) {
             return false;
         }

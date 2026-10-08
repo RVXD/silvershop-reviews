@@ -54,7 +54,7 @@ class DemoReviewProvider extends AbstractReviewProvider
 
     public function getShopRating(): ?ProviderRating
     {
-        return new ProviderRating(4.6, 128, 'https://example.com/demo/shop-reviews', $this->getName());
+        return ProviderRating::create(4.6, 128, 'https://example.com/demo/shop-reviews', $this->getName());
     }
 
     public function getProductRating(string $sku): ?ProviderRating
@@ -67,6 +67,6 @@ class DemoReviewProvider extends AbstractReviewProvider
         $rating = 3.8 + ($n % 12) / 10; // 3.8–4.9
         $count = 5 + ($n % 40);
 
-        return new ProviderRating($rating, $count, 'https://example.com/demo/product/' . rawurlencode($sku), $this->getName());
+        return ProviderRating::create($rating, $count, 'https://example.com/demo/product/' . rawurlencode($sku), $this->getName());
     }
 }

@@ -79,7 +79,7 @@ class KiyohProvider extends AbstractReviewProvider
             return null;
         }
 
-        return new ProviderRating(((float) $avg10) / 2, (int) ($data['numberReviews'] ?? 0), (string) ($data['url'] ?? ''), $this->getName());
+        return ProviderRating::create(((float) $avg10) / 2, (int) ($data['numberReviews'] ?? 0), (string) ($data['url'] ?? ''), $this->getName());
     }
 
     public function getProductRating(string $sku): ?ProviderRating
@@ -102,7 +102,7 @@ class KiyohProvider extends AbstractReviewProvider
             return null;
         }
 
-        return new ProviderRating(((float) $avg10) / 2, (int) ($data['numberReviews'] ?? 0), '', $this->getName());
+        return ProviderRating::create(((float) $avg10) / 2, (int) ($data['numberReviews'] ?? 0), '', $this->getName());
     }
 
     public function sendInvitation(Order $order): bool

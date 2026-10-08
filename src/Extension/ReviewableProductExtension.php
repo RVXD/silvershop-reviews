@@ -166,7 +166,7 @@ class ReviewableProductExtension extends Extension
                 ],
                 'name' => $review->Title,
                 'reviewBody' => $review->Content,
-                'datePublished' => $review->dbObject('Created')->Format('yyyy-MM-dd'),
+                'datePublished' => date('Y-m-d', strtotime((string) $review->Created)),
             ];
         }
 
