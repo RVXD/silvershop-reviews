@@ -208,6 +208,11 @@ composer test    # phpunit
 
 CI runs all three on PHP 8.3 and 8.4.
 
+## Translations
+
+All front-end and CMS strings go through `_t()` / `<%t %>`. Ships with **en, nl, de, fr, es, it** (`lang/*.yml`);
+override or add locales the usual Silverstripe way.
+
 ## License
 
 BSD-3-Clause
