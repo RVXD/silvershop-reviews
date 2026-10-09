@@ -42,9 +42,15 @@ class ReviewableProductExtension extends Extension
     /**
      * Approved customer questions for this product, newest first.
      */
-    public function ApprovedQuestions(): \SilverStripe\ORM\DataList
+    public function ApprovedQuestions(): DataList
     {
-        return $this->getOwner()->Questions()->filter('Approved', true);
+        $owner = $this->getOwner();
+        if (!$owner->isInDB()) {
+            // A not-yet-saved product has an UnsavedRelationList; return an empty DataList of the right type.
+            return ProductQuestion::get()->filter('ID', 0);
+        }
+
+        return $owner->Questions()->filter('Approved', true);
     }
 
     public function HasQuestions(): bool
@@ -73,7 +79,13 @@ class ReviewableProductExtension extends Extension
      */
     public function ApprovedReviews(): DataList
     {
-        return $this->getOwner()->Reviews()->filter('Approved', true);
+        $owner = $this->getOwner();
+        if (!$owner->isInDB()) {
+            // A not-yet-saved product has an UnsavedRelationList; return an empty DataList of the right type.
+            return Review::get()->filter('ID', 0);
+        }
+
+        return $owner->Reviews()->filter('Approved', true);
     }
 
     public function HasReviews(): bool
