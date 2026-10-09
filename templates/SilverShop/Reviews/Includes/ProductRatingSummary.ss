@@ -2,7 +2,7 @@
      Renders nothing until there is at least one approved review. --%>
 <% if $HasReviews %>
     <style>
-        .product-rating-summary{display:flex;width:fit-content;align-items:center;gap:.4rem;text-decoration:none;color:inherit;font-size:.95em;margin:.25em 0 1.25em}
+        .product-rating-summary{display:flex;width:fit-content;align-items:center;gap:.4rem;text-decoration:none;color:inherit;margin:.25em 0 1.25em}
         .product-rating-summary__stars{position:relative;display:inline-block;font-size:1.05em;line-height:1;white-space:nowrap}
         .product-rating-summary__stars .off{color:#d0d0d0}
         .product-rating-summary__stars .on{position:absolute;top:0;left:0;overflow:hidden;color:#f5a623}

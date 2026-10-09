@@ -203,10 +203,16 @@ SilverShop\Page\ProductController:
 
 ### Templates
 
-Every include is overridable by theme precedence (copy the path into your theme). Notably
-`SilverShop\Reviews\ProductReviews` (the whole product-page section) and `SilverShop\Reviews\ReviewFormToggle`
-(*only* the JS that collapses the review form behind the "Write a review" button — override it to change the
-behaviour, leave an empty file to disable it, or set `Review.collapse_write_form = false`).
+Every include is overridable by theme precedence (copy the path into your theme). Notable ones:
+
+- `SilverShop\Reviews\ProductReviews` — the whole product-page reviews section.
+- `SilverShop\Reviews\ReviewFormToggle` — *only* the JS that collapses the review form behind the "Write a
+  review" button. Override to change it, leave an empty file to disable, or set `Review.collapse_write_form = false`.
+- `SilverShop\Reviews\ReviewRatingStars` — *only* the JS that turns the rating `<select>` into an interactive
+  star picker (progressive enhancement; without JS the dropdown is used). Override or empty-file to change/disable.
+
+CSS note: the module's inline styles size fonts with `em` (relative to the theme's body text), not `rem`, so they
+render correctly whatever root font-size the theme uses (e.g. a `html { font-size: 10px }` / 62.5% theme).
 
 ## Testing
 

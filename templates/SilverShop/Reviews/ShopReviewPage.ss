@@ -64,6 +64,7 @@
         <h2><%t SilverShop\Reviews.LeaveShopReview "Leave a review" %></h2>
         <% if $CanReview %>
             $ReviewForm
+            <% include SilverShop\Reviews\ReviewRatingStars %>
         <% else %>
             <p>$GateMessage</p>
         <% end_if %>

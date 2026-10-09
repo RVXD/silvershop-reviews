@@ -9,34 +9,34 @@
         .product-reviews__stars-on{position:absolute;top:0;left:0;overflow:hidden;color:#f5a623}
         .product-reviews__count{color:#666}
         .product-reviews__breakdown{list-style:none;margin:0 0 1.5rem;padding:0;max-width:320px}
-        .product-reviews__breakdown li{display:flex;align-items:center;gap:.5rem;font-size:.9em;color:#666}
+        .product-reviews__breakdown li{display:flex;align-items:center;gap:.5rem;color:#666}
         .product-reviews__bar{flex:1;height:8px;background:#eee;border-radius:4px;overflow:hidden}
         .product-reviews__bar span{display:block;height:100%;background:#f5a623}
         .review{border-top:1px solid #eee;padding:1rem 0}
         .review__stars{color:#f5a623;letter-spacing:2px}
-        .review__verified{margin-left:.5rem;font-size:.85em;color:#2e7d32;font-weight:600}
-        .review__title{margin:.4rem 0 .2rem;font-size:1.1em}
-        .review__meta{margin:0 0 .4rem;font-size:.85em;color:#888}
+        .review__verified{margin-left:.5rem;color:#2e7d32;font-weight:600}
+        .review__title{margin:.4rem 0 .2rem}
+        .review__meta{margin:0 0 .4rem;color:#888}
         .review__body{white-space:pre-line}
         .review__points{list-style:none;margin:.6em 0 .2em;padding:0;display:flex;flex-direction:column;gap:.3em}
-        .review__point{display:flex;align-items:baseline;gap:.5em;font-size:.95em}
+        .review__point{display:flex;align-items:baseline;gap:.5em}
         .review__point-mark{flex:0 0 1.3em;width:1.3em;height:1.3em;line-height:1.3em;text-align:center;border-radius:50%;font-weight:700;color:#fff;font-size:.78em}
         .review__point--pro .review__point-mark{background:#2e7d32}
         .review__point--con .review__point-mark{background:#c0392b}
         .review__photos{display:flex;gap:.4rem;margin:.6rem 0;flex-wrap:wrap}
         .review__photos img{border-radius:4px;object-fit:cover}
-        .review__helpful{margin:.5rem 0 0;font-size:.85em;color:#777;display:flex;align-items:center;gap:.5rem}
+        .review__helpful{margin:.5rem 0 0;color:#777;display:flex;align-items:center;gap:.5rem}
         .review__vote{display:inline;margin:0}
-        .review__vote button{background:none;color:#555;border:1px solid #ccc;border-radius:4px;padding:1px 8px;font-size:.85em;cursor:pointer}
+        .review__vote button{background:none;color:#555;border:1px solid #ccc;border-radius:4px;padding:1px 8px;cursor:pointer}
         .product-reviews__pagination{display:flex;gap:.3rem;align-items:center;margin:1rem 0;flex-wrap:wrap}
-        .product-reviews__pagination a,.product-reviews__pagination strong,.product-reviews__pagination span{padding:2px 9px;border:1px solid #ddd;border-radius:4px;text-decoration:none;color:#555;font-size:.9em}
+        .product-reviews__pagination a,.product-reviews__pagination strong,.product-reviews__pagination span{padding:2px 9px;border:1px solid #ddd;border-radius:4px;text-decoration:none;color:#555}
         .product-reviews__pagination strong{background:#f5a623;border-color:#f5a623;color:#222}
         .product-reviews__form{margin-top:1.5rem;max-width:520px}
         .product-qna{margin-top:2rem;border-top:1px solid #e2e2e2;padding-top:1.25rem}
         .qna__item{border-top:1px solid #eee;padding:.8rem 0}
         .qna__q{font-weight:600}
         .qna__a{margin:.3rem 0 0 1rem;padding-left:.6rem;border-left:2px solid #eee}
-        .qna__staff{font-size:.8em;color:#2e7d32;font-weight:600;margin-left:.4rem}
+        .qna__staff{color:#2e7d32;font-weight:600;margin-left:.4rem}
     </style>
 
     <% if $ReviewsEnabled %>
@@ -44,7 +44,7 @@
 
     <% if $ProviderRating %>
         <% with $ProviderRating %>
-            <p class="product-reviews__provider" style="color:#555;font-size:.9em;margin:.25rem 0 1rem;">
+            <p class="product-reviews__provider" style="color:#555;margin:.25rem 0 1rem;">
                 <span style="color:#f5a623;letter-spacing:1px;">$StarsString</span>
                 <strong>$RatingValue</strong>/5
                 &middot; <%t SilverShop\Reviews.ProviderCount "{count} reviews on {provider}" count=$ReviewCount provider=$ProviderName %><% if $Url %>
@@ -130,6 +130,7 @@
             <div class="product-reviews__formbody"<% if $CollapseReviewForm %> data-review-formbody<% end_if %>>
                 <h3><%t SilverShop\Reviews.WriteHeading "Write a review" %></h3>
                 $ReviewForm
+                <% include SilverShop\Reviews\ReviewRatingStars %>
             </div>
             <% if $CollapseReviewForm %><% include SilverShop\Reviews\ReviewFormToggle %><% end_if %>
         <% else %>
