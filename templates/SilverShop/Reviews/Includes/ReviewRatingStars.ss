@@ -1,6 +1,7 @@
 <%-- Progressive enhancement: turn the review form's Rating dropdown into an interactive star picker.
      Without JavaScript the plain <select> is used. Override this template to restyle/replace, or leave an
-     empty file to keep the dropdown. --%>
+     empty file to keep the dropdown. Accessible: role=radiogroup/radio, keyboard (arrows), roving tabindex,
+     mirrors the select's required state. --%>
 <style>
     .rating-stars{display:inline-flex;gap:.1em;line-height:1}
     .rating-stars__star{background:none;border:none;padding:0 .04em;cursor:pointer;color:#d0d0d0;font-size:1.8em;line-height:1}
@@ -17,14 +18,33 @@
     var wrap = document.createElement('div');
     wrap.className = 'rating-stars';
     wrap.setAttribute('role','radiogroup');
-    var label = select.getAttribute('aria-label') || (select.id && document.querySelector('label[for="'+select.id+'"]'));
-    if(typeof label === 'string') wrap.setAttribute('aria-label', label);
+
+    // Accessible name from the field's label, and mirror the select's required state.
+    var lblEl = (select.id && document.querySelector('label[for="'+select.id+'"]'));
+    if(!lblEl){ var fld = select.closest('.field'); if(fld){ lblEl = fld.querySelector('label'); } }
+    wrap.setAttribute('aria-label', (lblEl ? lblEl.textContent.replace(/\s+/g,' ').trim() : '') || 'Rating');
+    if(select.required || select.getAttribute('aria-required') === 'true'){ wrap.setAttribute('aria-required','true'); }
 
     var stars = [];
     var current = parseInt(select.value, 10) || 0;
 
-    function paint(n){ for(var i=0;i<5;i++){ stars[i].classList.toggle('is-on', i < n); stars[i].setAttribute('aria-checked', (i+1)===current ? 'true':'false'); } }
-    function set(n){ current = n; select.value = String(n); paint(n); select.dispatchEvent(new Event('change', {bubbles:true})); }
+    function paint(n){
+        for(var i=0;i<5;i++){
+            stars[i].classList.toggle('is-on', i < n);
+            stars[i].setAttribute('aria-checked', (i+1) === current ? 'true' : 'false');
+        }
+    }
+    function roving(){
+        var idx = current > 0 ? current - 1 : 0;
+        for(var i=0;i<5;i++){ stars[i].tabIndex = (i === idx) ? 0 : -1; }
+    }
+    function set(n){
+        current = n;
+        select.value = String(n);
+        paint(n);
+        roving();
+        select.dispatchEvent(new Event('change', {bubbles:true}));
+    }
 
     for(var i=1;i<=5;i++){
         (function(val){
@@ -51,5 +71,6 @@
     select.parentNode.insertBefore(wrap, select);
     select.style.display = 'none';
     paint(current);
+    roving();
 })();
 </script>

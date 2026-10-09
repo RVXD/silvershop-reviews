@@ -106,7 +106,17 @@ class ShopReviewController extends Controller
             $fields->push($this->honeypotField());
         }
 
-        $required = $member ? ['Rating', 'Content'] : ['Rating', 'Content', 'AuthorName', 'AuthorEmail'];
+        $required = ['Rating'];
+        if (Review::config()->get('require_content')) {
+            $required[] = 'Content';
+        }
+        if (!$member) {
+            $required[] = 'AuthorName';
+            $required[] = 'AuthorEmail';
+        }
+        foreach ($required as $requiredField) {
+            $fields->dataFieldByName($requiredField)?->addExtraClass('is-required');
+        }
 
         $form = Form::create(
             $this,

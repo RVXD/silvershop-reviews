@@ -32,6 +32,7 @@
         .product-reviews__pagination a,.product-reviews__pagination strong,.product-reviews__pagination span{padding:2px 9px;border:1px solid #ddd;border-radius:4px;text-decoration:none;color:#555}
         .product-reviews__pagination strong{background:#f5a623;border-color:#f5a623;color:#222}
         .product-reviews__form{margin-top:1.5rem;max-width:520px}
+        .product-reviews__form .is-required label::after{content:" *";color:#c0392b}
         .product-qna{margin-top:2rem;border-top:1px solid #e2e2e2;padding-top:1.25rem}
         .qna__item{border-top:1px solid #eee;padding:.8rem 0}
         .qna__q{font-weight:600}

@@ -144,7 +144,18 @@ class ProductReviewControllerExtension extends Extension
             $fields->push($this->honeypotField());
         }
 
-        $required = $member ? ['Rating', 'Content'] : ['Rating', 'Content', 'AuthorName', 'AuthorEmail'];
+        $required = ['Rating'];
+        if (Review::config()->get('require_content')) {
+            $required[] = 'Content';
+        }
+        if (!$member) {
+            $required[] = 'AuthorName';
+            $required[] = 'AuthorEmail';
+        }
+        // Mark required fields so the template can show a visible indicator (the validator already enforces them).
+        foreach ($required as $requiredField) {
+            $fields->dataFieldByName($requiredField)?->addExtraClass('is-required');
+        }
 
         $form = Form::create(
             $this->getOwner(),

@@ -76,6 +76,7 @@ SilverShop\Reviews\Model\Review:
   allow_reviews: true        # master switch for the whole reviews section (list + form + votes)
   moderation: true           # reviews hidden until approved
   who_can_review: 'anyone'   # 'anyone' | 'members' | 'verified' (must have purchased the product)
+  require_content: false     # false = a star rating alone can be submitted (text optional); true = review text required
   collapse_write_form: true  # hide the review form behind a "Write a review" button (JS; no-JS shows the form)
   allow_review_points: true  # let reviewers add plus/minus points (pros/cons), one per line
   max_points: 5              # max plus points, and separately max minus points, kept per review

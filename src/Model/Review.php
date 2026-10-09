@@ -63,6 +63,13 @@ class Review extends DataObject
     private static string $who_can_review = 'anyone';
 
     /**
+     * Require written review text. Off by default — a star rating alone can be submitted (title and text
+     * optional), which lifts review volume (the common shop pattern, e.g. Amazon). Turn on to make the review
+     * body mandatory.
+     */
+    private static bool $require_content = false;
+
+    /**
      * Collapse the "write a review" form on the product page behind a "Write a review" button (revealed with
      * one click). Progressive enhancement — without JavaScript the form is shown as usual.
      */

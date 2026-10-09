@@ -21,6 +21,7 @@
         .review__meta{margin:.2rem 0;font-size:.85em;color:#888}
         .review__body{white-space:pre-line}
         label{display:block;font-weight:bold;margin:.6rem 0 .2rem;font-size:14px}
+        .is-required label::after{content:" *";color:#c0392b}
         input[type=text],textarea,select{width:100%;box-sizing:border-box;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:14px}
         button{background:#f5a623;color:#222;border:0;font-weight:bold;padding:11px 22px;border-radius:4px;cursor:pointer;font-size:14px;margin-top:1rem}
         .message{padding:10px 14px;border-radius:4px;margin:1rem 0}
