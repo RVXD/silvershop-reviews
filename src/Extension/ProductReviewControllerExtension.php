@@ -72,6 +72,15 @@ class ProductReviewControllerExtension extends Extension
     }
 
     /**
+     * Whether the product-page review form should start collapsed behind a "Write a review" button (the toggle
+     * is progressive enhancement — see ReviewFormToggleScript; without JavaScript the form just shows).
+     */
+    public function CollapseReviewForm(): bool
+    {
+        return (bool) Review::config()->get('collapse_write_form');
+    }
+
+    /**
      * Explains why the form is hidden, when it is.
      */
     public function ReviewGateMessage(): string

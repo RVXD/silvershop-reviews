@@ -11,14 +11,14 @@
         h1{margin:0 0 4px;font-size:22px}
         h2{margin:1.5rem 0 .5rem;font-size:18px}
         .summary{display:flex;align-items:center;gap:.6rem;margin:.5rem 0 1rem;flex-wrap:wrap}
-        .avg{font-size:1.8rem;font-weight:700}
-        .stars{position:relative;display:inline-block;font-size:1.2rem;line-height:1;white-space:nowrap}
+        .avg{font-size:1.8em;font-weight:700}
+        .stars{position:relative;display:inline-block;font-size:1.2em;line-height:1;white-space:nowrap}
         .stars-off{color:#d0d0d0}.stars-on{position:absolute;top:0;left:0;overflow:hidden;color:#f5a623}
         .count{color:#666}
         .review{border-top:1px solid #eee;padding:.9rem 0}
         .review__stars{color:#f5a623;letter-spacing:2px}
-        .review__verified{margin-left:.5rem;font-size:.8rem;color:#2e7d32;font-weight:600}
-        .review__meta{margin:.2rem 0;font-size:.8rem;color:#888}
+        .review__verified{margin-left:.5rem;font-size:.85em;color:#2e7d32;font-weight:600}
+        .review__meta{margin:.2rem 0;font-size:.85em;color:#888}
         .review__body{white-space:pre-line}
         label{display:block;font-weight:bold;margin:.6rem 0 .2rem;font-size:14px}
         input[type=text],textarea,select{width:100%;box-sizing:border-box;padding:8px;border:1px solid #ccc;border-radius:4px;font-size:14px}
@@ -35,7 +35,7 @@
         <% with $ShopConfig %>
             <% if $ProviderShopRating %>
                 <% with $ProviderShopRating %>
-                    <p style="color:#555;font-size:.9rem;margin:.25rem 0 1rem;">
+                    <p style="color:#555;font-size:.9em;margin:.25rem 0 1rem;">
                         <span style="color:#f5a623;letter-spacing:1px;">$StarsString</span>
                         <strong>$RatingValue</strong>/5
                         &middot; <%t SilverShop\Reviews.ProviderCount "{count} reviews on {provider}" count=$ReviewCount provider=$ProviderName %><% if $Url %>

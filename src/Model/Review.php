@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace SilverShop\Reviews\Model;
 
 use SilverShop\Model\Order;
+use SilverShop\Reviews\Control\ReviewVoteController;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\DropdownField;
 use SilverStripe\Forms\FieldList;
@@ -59,6 +60,12 @@ class Review extends DataObject
      * Who may submit a review: 'anyone' | 'members' | 'verified'.
      */
     private static string $who_can_review = 'anyone';
+
+    /**
+     * Collapse the "write a review" form on the product page behind a "Write a review" button (revealed with
+     * one click). Progressive enhancement — without JavaScript the form is shown as usual.
+     */
+    private static bool $collapse_write_form = true;
 
     /**
      * Minimum seconds between submissions from one session (basic anti-spam throttle).
@@ -236,6 +243,15 @@ class Review extends DataObject
     public function VotesEnabled(): bool
     {
         return (bool) self::config()->get('allow_votes');
+    }
+
+    /**
+     * The helpful-vote endpoint for this review in a direction ('up' | 'down'). Built via the controller's
+     * join_links Link() so the slashes are always correct (don't hand-concatenate $BaseHref in templates).
+     */
+    public function VoteLink(string $direction): string
+    {
+        return ReviewVoteController::singleton()->Link($this->ID . '/' . $direction);
     }
 
     /**

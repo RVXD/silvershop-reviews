@@ -75,6 +75,7 @@ SilverShop\Reviews\Model\Review:
   allow_reviews: true        # master switch for the whole reviews section (list + form + votes)
   moderation: true           # reviews hidden until approved
   who_can_review: 'anyone'   # 'anyone' | 'members' | 'verified' (must have purchased the product)
+  collapse_write_form: true  # hide the review form behind a "Write a review" button (JS; no-JS shows the form)
   submit_throttle_seconds: 30
   allow_votes: true          # helpful 👍/👎 votes
   allow_photos: true         # photo uploads on reviews
@@ -196,6 +197,13 @@ SilverShop\Page\ProductController:
   extensions:
     - MyReviewExtension
 ```
+
+### Templates
+
+Every include is overridable by theme precedence (copy the path into your theme). Notably
+`SilverShop\Reviews\ProductReviews` (the whole product-page section) and `SilverShop\Reviews\ReviewFormToggle`
+(*only* the JS that collapses the review form behind the "Write a review" button — override it to change the
+behaviour, leave an empty file to disable it, or set `Review.collapse_write_form = false`).
 
 ## Testing
 
