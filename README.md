@@ -1,8 +1,9 @@
 # silvershop/reviews
 
 Product and shop reviews for [SilverShop](https://github.com/silvershop/silvershop-core) (SilverStripe CMS 6):
-star ratings, moderation, verified purchases, review-invitation emails, photo reviews, helpful votes, a product
-Q&A, and optional bridges to external review providers (Trustpilot, Kiyoh / Klantenvertellen, The Feedback Company).
+star ratings, moderation, verified purchases, review-invitation emails, photo reviews, plus/minus points
+(pros & cons), helpful votes, a product Q&A, and optional bridges to external review providers (Trustpilot,
+Kiyoh / Klantenvertellen, The Feedback Company).
 
 ## Requirements
 
@@ -76,6 +77,8 @@ SilverShop\Reviews\Model\Review:
   moderation: true           # reviews hidden until approved
   who_can_review: 'anyone'   # 'anyone' | 'members' | 'verified' (must have purchased the product)
   collapse_write_form: true  # hide the review form behind a "Write a review" button (JS; no-JS shows the form)
+  allow_review_points: true  # let reviewers add plus/minus points (pros/cons), one per line
+  max_points: 5              # max plus points, and separately max minus points, kept per review
   submit_throttle_seconds: 30
   allow_votes: true          # helpful 👍/👎 votes
   allow_photos: true         # photo uploads on reviews

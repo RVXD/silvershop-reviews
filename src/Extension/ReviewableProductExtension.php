@@ -210,7 +210,8 @@ class ReviewableProductExtension extends Extension
         ];
 
         foreach ($this->ApprovedReviews()->limit(10) as $review) {
-            $schema['review'][] = [
+            /** @var \SilverShop\Reviews\Model\Review $review */
+            $reviewData = [
                 '@type' => 'Review',
                 'reviewRating' => [
                     '@type' => 'Rating',
@@ -226,6 +227,22 @@ class ReviewableProductExtension extends Extension
                 'reviewBody' => $review->Content,
                 'datePublished' => date('Y-m-d', strtotime((string) $review->Created)),
             ];
+
+            // Pros/cons as schema.org positiveNotes / negativeNotes (ItemList of ListItems).
+            foreach (['Pro' => 'positiveNotes', 'Con' => 'negativeNotes'] as $type => $property) {
+                $points = $review->Points()->filter('Type', $type);
+                if (!$points->count()) {
+                    continue;
+                }
+                $items = [];
+                $position = 1;
+                foreach ($points as $point) {
+                    $items[] = ['@type' => 'ListItem', 'position' => $position++, 'name' => (string) $point->Text];
+                }
+                $reviewData[$property] = ['@type' => 'ItemList', 'itemListElement' => $items];
+            }
+
+            $schema['review'][] = $reviewData;
         }
 
         // JSON_HEX_TAG|JSON_HEX_AMP escape < > & so user content (title/body/author) can't break out of

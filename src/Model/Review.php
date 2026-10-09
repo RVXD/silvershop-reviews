@@ -14,6 +14,7 @@ use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\ORM\HasManyList;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Permission;
 use SilverStripe\Security\SecurityToken;
@@ -103,6 +104,16 @@ class Review extends DataObject
      */
     private static int $reviews_per_page = 10;
 
+    /**
+     * Let reviewers add "plus" and "minus" points (pros/cons), one per line, shown as a +/- list.
+     */
+    private static bool $allow_review_points = true;
+
+    /**
+     * Maximum number of plus points (and, separately, minus points) kept per review.
+     */
+    private static int $max_points = 5;
+
     private static array $db = [
         'Rating' => 'Int',
         'Title' => 'Varchar(255)',
@@ -123,10 +134,12 @@ class Review extends DataObject
 
     private static array $has_many = [
         'Images' => ReviewImage::class . '.Review',
+        'Points' => ReviewPoint::class . '.Review',
     ];
 
     private static array $cascade_deletes = [
         'Images',
+        'Points',
     ];
 
     private static array $defaults = [
@@ -243,6 +256,68 @@ class Review extends DataObject
     public function VotesEnabled(): bool
     {
         return (bool) self::config()->get('allow_votes');
+    }
+
+    /**
+     * Whether plus/minus points are enabled (config).
+     */
+    public function PointsEnabled(): bool
+    {
+        return (bool) self::config()->get('allow_review_points');
+    }
+
+    public function HasPoints(): bool
+    {
+        return $this->PointsEnabled() && $this->Points()->exists();
+    }
+
+    /**
+     * The plus points (pros), ordered.
+     *
+     * @return HasManyList<ReviewPoint>
+     */
+    public function ProsList(): HasManyList
+    {
+        /** @var HasManyList<ReviewPoint> $list */
+        $list = $this->Points()->filter('Type', 'Pro');
+
+        return $list;
+    }
+
+    /**
+     * The minus points (cons), ordered.
+     *
+     * @return HasManyList<ReviewPoint>
+     */
+    public function ConsList(): HasManyList
+    {
+        /** @var HasManyList<ReviewPoint> $list */
+        $list = $this->Points()->filter('Type', 'Con');
+
+        return $list;
+    }
+
+    /**
+     * Create a review's points of one type ('Pro' | 'Con') from a textarea value — one point per line,
+     * trimmed, empties dropped, each capped to 255 chars, and no more than max_points kept.
+     */
+    public static function savePointsFromText(Review $review, string $text, string $type): void
+    {
+        $max = max(0, (int) self::config()->get('max_points'));
+        $lines = preg_split('/\r\n|\r|\n/', $text) ?: [];
+        $sort = 0;
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '' || $sort >= $max) {
+                continue;
+            }
+            $point = ReviewPoint::create();
+            $point->ReviewID = $review->ID;
+            $point->Type = $type;
+            $point->Text = mb_substr($line, 0, 255);
+            $point->Sort = ++$sort;
+            $point->write();
+        }
     }
 
     /**

@@ -18,6 +18,11 @@
         .review__title{margin:.4rem 0 .2rem;font-size:1.1em}
         .review__meta{margin:0 0 .4rem;font-size:.85em;color:#888}
         .review__body{white-space:pre-line}
+        .review__points{list-style:none;margin:.6em 0 .2em;padding:0;display:flex;flex-direction:column;gap:.3em}
+        .review__point{display:flex;align-items:baseline;gap:.5em;font-size:.95em}
+        .review__point-mark{flex:0 0 1.3em;width:1.3em;height:1.3em;line-height:1.3em;text-align:center;border-radius:50%;font-weight:700;color:#fff;font-size:.78em}
+        .review__point--pro .review__point-mark{background:#2e7d32}
+        .review__point--con .review__point-mark{background:#c0392b}
         .review__photos{display:flex;gap:.4rem;margin:.6rem 0;flex-wrap:wrap}
         .review__photos img{border-radius:4px;object-fit:cover}
         .review__helpful{margin:.5rem 0 0;font-size:.85em;color:#777;display:flex;align-items:center;gap:.5rem}
@@ -83,6 +88,13 @@
             <% if $Title %><h3 class="review__title">$Title</h3><% end_if %>
             <p class="review__meta">$AuthorName &middot; $Created.Nice</p>
             <div class="review__body">$Content</div>
+
+            <% if $HasPoints %>
+                <ul class="review__points">
+                    <% loop $ProsList %><li class="review__point review__point--pro"><span class="review__point-mark" aria-hidden="true">+</span> $Text.XML</li><% end_loop %>
+                    <% loop $ConsList %><li class="review__point review__point--con"><span class="review__point-mark" aria-hidden="true">&minus;</span> $Text.XML</li><% end_loop %>
+                </ul>
+            <% end_if %>
 
             <% if $HasImages %>
                 <div class="review__photos">

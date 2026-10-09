@@ -111,6 +111,16 @@ class ProductReviewControllerExtension extends Extension
             TextareaField::create('Content', _t(self::class . '.Content', 'Your review'))->setRows(5)
         );
 
+        // Optional plus/minus points (pros/cons), one per line.
+        if (Review::config()->get('allow_review_points')) {
+            $fields->push(
+                TextareaField::create('Pros', _t(self::class . '.Pros', 'What was good? (one per line)'))->setRows(3)
+            );
+            $fields->push(
+                TextareaField::create('Cons', _t(self::class . '.Cons', 'What could be better? (one per line)'))->setRows(3)
+            );
+        }
+
         if ($member) {
             $fields->push(HiddenField::create('AuthorName', '', $member->getName()));
             $fields->push(HiddenField::create('AuthorEmail', '', $member->Email));
@@ -204,6 +214,11 @@ class ProductReviewControllerExtension extends Extension
         }
         $this->getOwner()->extend('updateReview', $review, $data);
         $review->write();
+
+        if (Review::config()->get('allow_review_points')) {
+            Review::savePointsFromText($review, (string) ($data['Pros'] ?? ''), 'Pro');
+            Review::savePointsFromText($review, (string) ($data['Cons'] ?? ''), 'Con');
+        }
 
         $this->saveReviewPhotos($review);
 
