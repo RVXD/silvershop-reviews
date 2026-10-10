@@ -150,6 +150,20 @@ en:
     Sort: 'Sort'
     Text: 'Text'
     Type: 'Type'
+  SilverShop\Reviews\Report\PendingReviewsReport:
+    TITLE: 'Reviews awaiting moderation'
+    DESC: 'Submitted product reviews that are not yet approved — the moderation queue, oldest first.'
+    ColProduct: 'Product'
+    ColAuthor: 'Author'
+    ColRating: 'Rating'
+    ColDate: 'Submitted'
+  SilverShop\Reviews\Report\LowestRatedProductsReport:
+    TITLE: 'Lowest-rated products'
+    DESC: 'Products ranked by average approved review rating, worst first — to surface quality problems.'
+    ColProduct: 'Product'
+    ColAvgRating: 'Average rating'
+    ColReviews: 'Reviews'
+    MinReviews: 'Minimum number of reviews'
   SilverShop\Reviews\Service\ReviewInvitationService:
     ReminderSubject: 'A reminder to review your order from {shop}'
     Subject: 'How was your order from {shop}?'

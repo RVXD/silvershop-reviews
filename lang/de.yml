@@ -150,6 +150,20 @@ de:
     Sort: 'Sortierung'
     Text: 'Text'
     Type: 'Typ'
+  SilverShop\Reviews\Report\PendingReviewsReport:
+    TITLE: 'Bewertungen, die auf Freigabe warten'
+    DESC: 'Eingereichte Produktbewertungen, die noch nicht freigegeben sind — die Moderationswarteschlange, älteste zuerst.'
+    ColProduct: 'Produkt'
+    ColAuthor: 'Autor'
+    ColRating: 'Bewertung'
+    ColDate: 'Eingereicht'
+  SilverShop\Reviews\Report\LowestRatedProductsReport:
+    TITLE: 'Am schlechtesten bewertete Produkte'
+    DESC: 'Produkte sortiert nach durchschnittlicher freigegebener Bewertung, schlechteste zuerst — um Qualitätsprobleme aufzudecken.'
+    ColProduct: 'Produkt'
+    ColAvgRating: 'Durchschnittliche Bewertung'
+    ColReviews: 'Bewertungen'
+    MinReviews: 'Mindestanzahl an Bewertungen'
   SilverShop\Reviews\Service\ReviewInvitationService:
     ReminderSubject: 'Eine Erinnerung, Ihre Bestellung von {shop} zu bewerten'
     Subject: 'Wie war Ihre Bestellung von {shop}?'

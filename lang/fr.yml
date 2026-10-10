@@ -150,6 +150,20 @@ fr:
     Sort: 'Tri'
     Text: 'Texte'
     Type: 'Type'
+  SilverShop\Reviews\Report\PendingReviewsReport:
+    TITLE: 'Avis en attente de modération'
+    DESC: 'Avis sur les produits soumis mais pas encore approuvés — la file de modération, les plus anciens d''abord.'
+    ColProduct: 'Produit'
+    ColAuthor: 'Auteur'
+    ColRating: 'Note'
+    ColDate: 'Soumis le'
+  SilverShop\Reviews\Report\LowestRatedProductsReport:
+    TITLE: 'Produits les moins bien notés'
+    DESC: 'Produits classés par note moyenne des avis approuvés, les pires d''abord — pour repérer les problèmes de qualité.'
+    ColProduct: 'Produit'
+    ColAvgRating: 'Note moyenne'
+    ColReviews: 'Avis'
+    MinReviews: 'Nombre minimum d''avis'
   SilverShop\Reviews\Service\ReviewInvitationService:
     ReminderSubject: 'Un rappel pour évaluer votre commande de {shop}'
     Subject: 'Comment s''est passée votre commande de {shop} ?'

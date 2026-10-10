@@ -150,6 +150,20 @@ nl:
     Sort: 'Sortering'
     Text: 'Tekst'
     Type: 'Type'
+  SilverShop\Reviews\Report\PendingReviewsReport:
+    TITLE: 'Reviews die op moderatie wachten'
+    DESC: 'Ingediende productreviews die nog niet zijn goedgekeurd — de moderatiewachtrij, oudste eerst.'
+    ColProduct: 'Product'
+    ColAuthor: 'Auteur'
+    ColRating: 'Beoordeling'
+    ColDate: 'Ingediend'
+  SilverShop\Reviews\Report\LowestRatedProductsReport:
+    TITLE: 'Laagst beoordeelde producten'
+    DESC: 'Producten gerangschikt op gemiddelde goedgekeurde beoordeling, slechtste eerst — om kwaliteitsproblemen zichtbaar te maken.'
+    ColProduct: 'Product'
+    ColAvgRating: 'Gemiddelde beoordeling'
+    ColReviews: 'Reviews'
+    MinReviews: 'Minimum aantal reviews'
   SilverShop\Reviews\Service\ReviewInvitationService:
     ReminderSubject: 'Een herinnering om je bestelling bij {shop} te beoordelen'
     Subject: 'Hoe was je bestelling bij {shop}?'

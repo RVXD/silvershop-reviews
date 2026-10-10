@@ -150,6 +150,20 @@ it:
     Sort: 'Ordinamento'
     Text: 'Testo'
     Type: 'Tipo'
+  SilverShop\Reviews\Report\PendingReviewsReport:
+    TITLE: 'Recensioni in attesa di moderazione'
+    DESC: 'Recensioni di prodotti inviate ma non ancora approvate — la coda di moderazione, prima le più vecchie.'
+    ColProduct: 'Prodotto'
+    ColAuthor: 'Autore'
+    ColRating: 'Valutazione'
+    ColDate: 'Inviata'
+  SilverShop\Reviews\Report\LowestRatedProductsReport:
+    TITLE: 'Prodotti con valutazione più bassa'
+    DESC: 'Prodotti ordinati per valutazione media delle recensioni approvate, prima i peggiori — per individuare problemi di qualità.'
+    ColProduct: 'Prodotto'
+    ColAvgRating: 'Valutazione media'
+    ColReviews: 'Recensioni'
+    MinReviews: 'Numero minimo di recensioni'
   SilverShop\Reviews\Service\ReviewInvitationService:
     ReminderSubject: 'Un promemoria per recensire il tuo ordine da {shop}'
     Subject: 'Com''è stato il tuo ordine da {shop}?'
