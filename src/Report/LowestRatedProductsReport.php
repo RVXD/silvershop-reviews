@@ -121,7 +121,7 @@ class LowestRatedProductsReport extends Report
             }
         }
 
-        return array_values($classes);
+        return $classes;
     }
 
     /**
