@@ -1,4 +1,7 @@
 nl:
+  SilverShop\Reviews\Search\RatingFacet:
+    TITLE: 'Beoordeling'
+    STARS: '{stars}★ en hoger'
   SilverShop\Reviews:
     AlreadyReviewed: 'Je hebt deze bestelling beoordeeld. Bedankt voor je feedback.'
     AskHeading: 'Stel een vraag'

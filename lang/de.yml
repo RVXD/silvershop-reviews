@@ -1,4 +1,7 @@
 de:
+  SilverShop\Reviews\Search\RatingFacet:
+    TITLE: 'Bewertung'
+    STARS: '{stars}★ und mehr'
   SilverShop\Reviews:
     AlreadyReviewed: 'Sie haben diese Bestellung bewertet. Vielen Dank für Ihr Feedback.'
     AskHeading: 'Eine Frage stellen'

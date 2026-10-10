@@ -26,13 +26,21 @@
         "cambis/silverstan": "^2.1",
         "silverstripe/recipe-testing": "^4",
         "silverstripe/sqlite3": "^4",
-        "squizlabs/php_codesniffer": "^3.0"
+        "squizlabs/php_codesniffer": "^3.0",
+        "silvershop/search": "dev-main"
     },
     "suggest": {
         "silvershop/store-profile": "Shared shop identity used as the sender for review-invitation emails (v2).",
         "silverstripe/queuedjobs": "Scheduled review-invitation emails after an order is fulfilled (v2).",
-        "silverstripe/spamprotection": "Pluggable spam protection (reCAPTCHA/hCaptcha/...) auto-enabled on the public forms."
+        "silverstripe/spamprotection": "Pluggable spam protection (reCAPTCHA/hCaptcha/...) auto-enabled on the public forms.",
+        "silvershop/search": "Adds a star-rating facet to the storefront product search."
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/RVXD/silvershop-search.git"
+        }
+    ],
     "scripts": {
         "test": "vendor/bin/phpunit",
         "stan": "vendor/bin/phpstan analyse --configuration=phpstan.neon --memory-limit=-1",

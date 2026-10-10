@@ -1,0 +1,9 @@
+---
+Name: silvershop-reviews-search
+Only:
+  moduleexists: silvershop/search
+---
+# Registers the rating facet into silvershop/search — only when that module is installed, so reviews stays standalone.
+SilverShop\Search\Facet\FacetRegistry:
+  facets:
+    rating: '%$SilverShop\Reviews\Search\RatingFacet'
