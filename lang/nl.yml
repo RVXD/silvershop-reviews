@@ -87,6 +87,8 @@ nl:
   SilverShop\Reviews\Extension\ReviewableProductExtension:
     CMSSummary: 'Gemiddelde beoordeling: {avg} / 5 uit {count} goedgekeurde review(s).'
     Reviews: 'Reviews'
+    ReviewsInfo: 'Goedgekeurde reviews verschijnen op de productpagina en tellen mee voor de beoordeling. Voeg hier een review toe, of laat klanten er zelf een plaatsen, en vink "Goedgekeurd" aan om te publiceren.'
+    QuestionsInfo: 'Vragen van klanten over dit product. Keur een vraag goed — en voeg een antwoord toe — om deze op de productpagina te tonen.'
   SilverShop\Reviews\Extension\ShopReviewExtension:
     CMSSummary: 'Shopbeoordeling: {avg} / 5 uit {count} goedgekeurde review(s).'
     ShopReviews: 'Shopreviews'

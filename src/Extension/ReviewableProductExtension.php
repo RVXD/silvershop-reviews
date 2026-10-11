@@ -270,7 +270,7 @@ class ReviewableProductExtension extends Extension
     public function updateCMSFields(FieldList $fields): void
     {
         $summary = sprintf(
-            '<p class="message">%s</p>',
+            '<p class="message" style="margin-top:1.5em">%s</p>',
             _t(
                 self::class . '.CMSSummary',
                 'Average rating: {avg} / 5 from {count} approved review(s).',
@@ -285,9 +285,31 @@ class ReviewableProductExtension extends Extension
             GridFieldConfig_RecordEditor::create()
         );
 
+        // Reviews tab: the grid, then the rating summary (spaced away from the grid), then a guidance notice.
         $fields->addFieldsToTab('Root.Reviews', [
-            LiteralField::create('ReviewsSummary', $summary),
             $grid,
+            LiteralField::create('ReviewsSummary', $summary),
+            LiteralField::create('ReviewsInfo', $this->cmsNotice(_t(
+                self::class . '.ReviewsInfo',
+                'Approved reviews appear on the product page and count towards its rating. Add a review here, '
+                . 'or let customers submit their own, then tick "Approved" to publish it.'
+            ))),
         ]);
+
+        // Questions tab (auto-scaffolded grid): add a matching guidance notice at the bottom.
+        $fields->addFieldToTab('Root.Questions', LiteralField::create('QuestionsInfo', $this->cmsNotice(_t(
+            self::class . '.QuestionsInfo',
+            'Customer questions about this product. Approve a question — and add an answer — to show it on '
+            . 'the product page.'
+        ))));
+    }
+
+    /**
+     * A blue info notice for the CMS, matching the style SilverShop core uses on the Pricing/Variations tabs.
+     */
+    private function cmsNotice(string $text): string
+    {
+        return '<p class="message notice" style="margin-top:1.5em;display:flex;align-items:flex-start;gap:.5em">'
+            . '<span class="font-icon-info-circled" aria-hidden="true"></span><span>' . $text . '</span></p>';
     }
 }

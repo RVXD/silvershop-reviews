@@ -87,6 +87,8 @@ fr:
   SilverShop\Reviews\Extension\ReviewableProductExtension:
     CMSSummary: 'Note moyenne : {avg} / 5 sur {count} avis approuvé(s).'
     Reviews: 'Avis'
+    ReviewsInfo: 'Les avis approuvés apparaissent sur la page produit et comptent dans sa note. Ajoutez un avis ici, ou laissez les clients soumettre le leur, puis cochez « Approuvé » pour le publier.'
+    QuestionsInfo: 'Questions des clients sur ce produit. Approuvez une question — et ajoutez une réponse — pour l''afficher sur la page produit.'
   SilverShop\Reviews\Extension\ShopReviewExtension:
     CMSSummary: 'Note de la boutique : {avg} / 5 sur {count} avis approuvé(s).'
     ShopReviews: 'Avis sur la boutique'

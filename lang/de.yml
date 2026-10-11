@@ -87,6 +87,8 @@ de:
   SilverShop\Reviews\Extension\ReviewableProductExtension:
     CMSSummary: 'Durchschnittliche Bewertung: {avg} / 5 aus {count} freigegebenen Bewertung(en).'
     Reviews: 'Bewertungen'
+    ReviewsInfo: 'Freigegebene Bewertungen erscheinen auf der Produktseite und zählen zur Bewertung. Füge hier eine Bewertung hinzu oder lass Kunden selbst eine abgeben und setze dann das Häkchen bei „Freigegeben", um sie zu veröffentlichen.'
+    QuestionsInfo: 'Kundenfragen zu diesem Produkt. Gib eine Frage frei — und füge eine Antwort hinzu —, um sie auf der Produktseite anzuzeigen.'
   SilverShop\Reviews\Extension\ShopReviewExtension:
     CMSSummary: 'Shop-Bewertung: {avg} / 5 aus {count} freigegebenen Bewertung(en).'
     ShopReviews: 'Shop-Bewertungen'

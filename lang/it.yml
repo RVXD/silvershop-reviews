@@ -87,6 +87,8 @@ it:
   SilverShop\Reviews\Extension\ReviewableProductExtension:
     CMSSummary: 'Valutazione media: {avg} / 5 da {count} recensione/i approvata/e.'
     Reviews: 'Recensioni'
+    ReviewsInfo: 'Le recensioni approvate appaiono sulla pagina del prodotto e contribuiscono alla sua valutazione. Aggiungi una recensione qui, o lascia che i clienti inviino la loro, poi spunta "Approvata" per pubblicarla.'
+    QuestionsInfo: 'Domande dei clienti su questo prodotto. Approva una domanda — e aggiungi una risposta — per mostrarla sulla pagina del prodotto.'
   SilverShop\Reviews\Extension\ShopReviewExtension:
     CMSSummary: 'Valutazione del negozio: {avg} / 5 da {count} recensione/i approvata/e.'
     ShopReviews: 'Recensioni del negozio'
