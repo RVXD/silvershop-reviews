@@ -18,6 +18,8 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Model\ArrayData;
 use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\DB;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Security\Member;
 
@@ -29,6 +31,22 @@ use SilverStripe\Security\Member;
  */
 class ReviewableProductExtension extends Extension
 {
+    /**
+     * The sortable product column that mirrors {@see AverageRating()}. Exposed as a constant so the storefront can
+     * offer a "Best rated" sort (silvershop/listsorter needs a real DB column; a computed method is not sortable)
+     * without hard-coding the field name.
+     */
+    public const RATING_SORT_FIELD = 'AverageRating';
+
+    /**
+     * Denormalised mean of the product's approved reviews, kept in sync by {@see Review} write/delete hooks and the
+     * RecalculateProductRatingsTask. 0.000 when there are no approved reviews, so unrated products sort last under
+     * "{field} DESC". It only exists to make rating sortable at the DB level — read {@see AverageRating()} for display.
+     */
+    private static array $db = [
+        'AverageRating' => 'Decimal(4,3)',
+    ];
+
     private static array $has_many = [
         'Reviews' => Review::class . '.Subject',
         'Questions' => ProductQuestion::class . '.Subject',
@@ -120,6 +138,40 @@ class ReviewableProductExtension extends Extension
         }
 
         return round((float) $this->ApprovedReviews()->avg('Rating'), 1);
+    }
+
+    /**
+     * Recompute the denormalised {@see $db} AverageRating from the approved reviews and store it on BOTH the draft and
+     * live product rows. Written with a direct query (not $owner->write()) because this is a cache column, not
+     * editorial content: a normal write would create a new Version and leave the Live stage stale for the storefront.
+     * Called from the Review write/delete hooks and the backfill task; a no-op for an unsaved product.
+     */
+    public function recalculateAverageRating(): void
+    {
+        $owner = $this->getOwner();
+        if (!$owner->isInDB()) {
+            return;
+        }
+
+        $average = round((float) $owner->Reviews()->filter('Approved', true)->avg('Rating'), 3);
+        $id = (int) $owner->ID;
+
+        // The column lives on the table that declares it (SilverShop_Product), not the hierarchy base (SiteTree);
+        // resolve it from the schema so subclasses work too, then update both the draft and live stage rows.
+        $table = DataObject::getSchema()->tableForField($owner->ClassName, 'AverageRating');
+        if (!$table) {
+            return;
+        }
+
+        $dbSchema = DB::get_schema();
+        foreach ([$table, $table . '_Live'] as $stageTable) {
+            if ($dbSchema->hasTable($stageTable)) {
+                DB::prepared_query(
+                    sprintf('UPDATE "%s" SET "AverageRating" = ? WHERE "ID" = ?', $stageTable),
+                    [$average, $id]
+                );
+            }
+        }
     }
 
     /**

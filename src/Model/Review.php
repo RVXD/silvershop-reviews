@@ -184,6 +184,31 @@ class Review extends DataObject
     ];
 
     /**
+     * Keep the subject's denormalised average-rating column in sync whenever a review is saved (approved, edited,
+     * unapproved) or removed, so the storefront's "Best rated" sort stays accurate. Guarded: only subjects that carry
+     * the reviewable extension (i.e. Products) are touched.
+     */
+    protected function onAfterWrite(): void
+    {
+        parent::onAfterWrite();
+        $this->refreshSubjectRating();
+    }
+
+    protected function onAfterDelete(): void
+    {
+        parent::onAfterDelete();
+        $this->refreshSubjectRating();
+    }
+
+    private function refreshSubjectRating(): void
+    {
+        $subject = $this->Subject();
+        if ($subject && $subject->exists() && $subject->hasMethod('recalculateAverageRating')) {
+            $subject->recalculateAverageRating();
+        }
+    }
+
+    /**
      * Title of the reviewed subject, for CMS columns (the subject may be any class).
      */
     public function getSubjectTitle(): string
