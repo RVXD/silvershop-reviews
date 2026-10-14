@@ -7,3 +7,13 @@ Only:
 SilverShop\Search\Facet\FacetRegistry:
   facets:
     rating: '%$SilverShop\Reviews\Search\RatingFacet'
+
+# RatingFacet is only declared when the SearchFacet interface exists (so a search-free site boots cleanly); a class
+# nested in that guard is not reflected into the config graph, so its threshold defaults are set here instead (this
+# block is already search-guarded, so it is applied exactly when the class is declared).
+SilverShop\Reviews\Search\RatingFacet:
+  thresholds:
+    - 4
+    - 3
+    - 2
+    - 1

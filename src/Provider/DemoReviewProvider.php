@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace SilverShop\Reviews\Provider;
 
 use Psr\Log\LoggerInterface;
-use SilverShop\Model\Order;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\ORM\DataObject;
 
 /**
  * A fake provider returning canned data, for trialling the provider pipeline (display badges + invitation
@@ -44,7 +44,7 @@ class DemoReviewProvider extends AbstractReviewProvider
         return true;
     }
 
-    public function sendInvitation(Order $order): bool
+    public function sendInvitation(DataObject $order): bool
     {
         Injector::inst()->get(LoggerInterface::class)
             ->info('[DemoReviewProvider] would hand off review invitation for order #' . $order->ID);

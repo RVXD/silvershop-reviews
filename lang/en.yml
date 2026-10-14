@@ -3,6 +3,10 @@ en:
     TITLE: 'Rating'
     STARS: '{stars}★ and up'
   SilverShop\Reviews:
+    CompanyCount: '{count} review(s)'
+    CompanyReviewTitle: 'Review our company'
+    ReadCompanyReviews: 'Read our reviews'
+    ReviewOurCompany: 'Review our company'
     AlreadyReviewed: 'You''ve reviewed this order. Thanks for sharing your feedback.'
     AskHeading: 'Ask a question'
     Count: '{count} review(s)'
@@ -53,6 +57,8 @@ en:
     ThanksModerated: 'Thank you! Your review(s) will appear once approved.'
     Title: 'Title'
   SilverShop\Reviews\Control\ShopReviewController:
+    GateMembersCompany: 'Please log in to leave a review.'
+    GateVerifiedCompany: 'Only customers who have ordered can leave a review.'
     AuthorEmail: 'Your email'
     AuthorName: 'Your name'
     BadRating: 'Please choose a rating between 1 and 5.'

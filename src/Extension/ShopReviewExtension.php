@@ -8,99 +8,102 @@ use SilverShop\Reviews\Model\Review;
 use SilverShop\Reviews\Provider\ProviderRating;
 use SilverShop\Reviews\Provider\ReviewProviderRegistry;
 use SilverStripe\Control\Director;
-use SilverStripe\Core\Extension;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\LiteralField;
-use SilverStripe\Model\ArrayData;
 use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\FieldType\DBHTMLText;
 
 /**
- * Makes the store itself (SiteConfig) reviewable: overall shop reviews via the same polymorphic Review
- * model, aggregate rating helpers for a store badge, Organization JSON-LD, and a CMS moderation grid.
+ * Makes the store / company itself (SiteConfig) reviewable: overall company/website reviews via the same
+ * polymorphic {@see Review} model, aggregate helpers for a rating badge, Organization (or LocalBusiness)
+ * aggregateRating JSON-LD, and a CMS moderation grid. Entirely core-free — this is the company/site-review
+ * feature that works on a plain SilverStripe site with no shop.
  *
- * @extends Extension<\SilverStripe\SiteConfig\SiteConfig>
+ * The generic aggregate helpers come from {@see ReviewableExtension}; the public `Shop*` methods below are the
+ * stable template API (kept for backward compatibility) and simply delegate to that shared logic.
+ *
+ * @extends ReviewableExtension<\SilverStripe\SiteConfig\SiteConfig>
  */
-class ShopReviewExtension extends Extension
+class ShopReviewExtension extends ReviewableExtension
 {
     private static array $has_many = [
         'ShopReviews' => Review::class . '.Subject',
     ];
 
     /**
-     * Approved shop reviews, newest first.
+     * schema.org @type for the company aggregateRating JSON-LD. 'Organization' by default; set 'LocalBusiness'
+     * (and populate address/geo in your own markup) for a local-business site that wants seller stars.
+     */
+    private static string $schema_type = 'Organization';
+
+    protected function reviewsRelationName(): string
+    {
+        return 'ShopReviews';
+    }
+
+    /**
+     * Whether to use company/website wording instead of shop wording on the rating badge / reviews surface
+     * (auto on a core-free site). Lets SiteConfig-context templates pick the right label set.
+     */
+    public function IsCompanyMode(): bool
+    {
+        return Review::companyLabels();
+    }
+
+    /**
+     * Approved shop/company reviews, newest first.
      */
     public function ApprovedShopReviews(): DataList
     {
-        return $this->getOwner()->ShopReviews()->filter('Approved', true);
+        return $this->ApprovedReviews();
     }
 
     public function HasShopReviews(): bool
     {
-        return $this->ApprovedShopReviews()->exists();
+        return $this->HasReviews();
     }
 
     public function ShopRatingCount(): int
     {
-        return $this->ApprovedShopReviews()->count();
+        return $this->RatingCount();
     }
 
     public function ShopAverageRating(): float
     {
-        if (!$this->HasShopReviews()) {
-            return 0.0;
-        }
-
-        return round((float) $this->ApprovedShopReviews()->avg('Rating'), 1);
+        return $this->AverageRating();
     }
 
     public function ShopRatingPercent(): int
     {
-        return (int) round($this->ShopAverageRating() / 5 * 100);
+        return $this->AverageRatingPercent();
     }
 
     public function ShopRatingBreakdown(): ArrayList
     {
-        $total = $this->ShopRatingCount();
-        $list = ArrayList::create();
-        for ($stars = 5; $stars >= 1; $stars--) {
-            $count = $this->ApprovedShopReviews()->filter('Rating', $stars)->count();
-            $list->push(ArrayData::create([
-                'Stars' => $stars,
-                'Count' => $count,
-                'Percent' => $total > 0 ? (int) round($count / $total * 100) : 0,
-            ]));
-        }
-
-        return $list;
+        return $this->RatingBreakdown();
     }
 
     /**
-     * Organization JSON-LD with the store's aggregate rating, for rich snippets. Empty when no reviews.
+     * Organization (or LocalBusiness) JSON-LD with the company's aggregate rating, for rich snippets.
+     * Empty when there are no reviews (never emit a zero rating).
      */
     public function ShopRatingSchemaOrg(): DBHTMLText
     {
         $html = DBHTMLText::create();
-        if (!$this->HasShopReviews()) {
+        if (!$this->HasReviews()) {
             return $html;
         }
 
         $owner = $this->getOwner();
+        $type = (string) Config::inst()->get(static::class, 'schema_type') ?: 'Organization';
         $schema = [
             '@context' => 'https://schema.org',
-            '@type' => 'Organization',
+            '@type' => $type,
             'name' => $owner->hasMethod('StoreProfileName') ? $owner->StoreProfileName() : $owner->Title,
             'url' => Director::absoluteBaseURL(),
-            'aggregateRating' => [
-                '@type' => 'AggregateRating',
-                'ratingValue' => (string) $this->ShopAverageRating(),
-                'reviewCount' => $this->ShopRatingCount(),
-                'bestRating' => '5',
-                'worstRating' => '1',
-            ],
+            'aggregateRating' => $this->aggregateRatingNode(),
         ];
 
         // JSON_HEX_TAG|JSON_HEX_AMP escape < > & so the content can't break out of the <script> block.
@@ -111,7 +114,7 @@ class ShopReviewExtension extends Extension
     }
 
     /**
-     * The store's rating at the active external review provider, or null.
+     * The company's rating at the active external review provider, or null.
      */
     public function ProviderShopRating(): ?ProviderRating
     {
@@ -131,16 +134,9 @@ class ShopReviewExtension extends Extension
             )
         );
 
-        $grid = GridField::create(
-            'ShopReviews',
-            _t(self::class . '.ShopReviews', 'Shop reviews'),
-            $this->getOwner()->ShopReviews(),
-            GridFieldConfig_RecordEditor::create()
-        );
-
         $fields->addFieldsToTab('Root.ShopReviews', [
             LiteralField::create('ShopReviewsSummary', $summary),
-            $grid,
+            $this->buildReviewsGrid('ShopReviews', _t(self::class . '.ShopReviews', 'Shop reviews')),
         ]);
     }
 }

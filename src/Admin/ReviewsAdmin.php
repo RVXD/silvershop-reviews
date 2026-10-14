@@ -6,19 +6,18 @@ namespace SilverShop\Reviews\Admin;
 
 use SilverShop\Reviews\Model\ProductQuestion;
 use SilverShop\Reviews\Model\Review;
-use SilverShop\Reviews\Model\ReviewInvitation;
 use SilverStripe\Admin\ModelAdmin;
 
 /**
  * CMS moderation area for reviews: approve/reject, edit, reply (via Content), and filter by status.
- * Also lists review invitations and their status (sent / responded / unsubscribed).
+ * When silvershop/core is installed, review invitations (sent / responded / unsubscribed) are added to the
+ * managed models in the module's guarded _config.php.
  */
 class ReviewsAdmin extends ModelAdmin
 {
     private static array $managed_models = [
         Review::class,
         ProductQuestion::class,
-        ReviewInvitation::class,
     ];
 
     private static string $url_segment = 'reviews';

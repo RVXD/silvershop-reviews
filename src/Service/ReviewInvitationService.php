@@ -4,11 +4,12 @@ declare(strict_types=1);
 
 namespace SilverShop\Reviews\Service;
 
-use SilverShop\Checkout\ShopEmailSender;
 use SilverShop\Model\Order;
 use SilverShop\Reviews\Model\ReviewInvitation;
 use SilverShop\Reviews\Provider\ReviewProviderRegistry;
+use SilverStripe\Control\Director;
 use SilverStripe\Control\Email\Email;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
 use SilverStripe\Core\Injector\Injectable;
@@ -16,18 +17,23 @@ use SilverStripe\Model\ArrayData;
 use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\FieldType\DBHTMLText;
+use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * Finds orders that are due a review invitation, sends the (tokenised) invitation email, and later a
  * reminder. Driven by {@link \SilverShop\Reviews\Task\SendReviewInvitationsTask} (cron); a queued-jobs
  * wrapper can call the same methods when symbiote/silverstripe-queuedjobs is installed.
+ *
+ * The whole invitation stack is order-bound (silvershop/core) and is only ever routed/registered behind the
+ * class_exists() guards in the module's _config.php. Sender identity is resolved locally (the same framework-only
+ * logic as core's ShopEmailSender trait) rather than by using that trait, so the class — and its config — stays
+ * loadable without core (a hard `use` of the core trait would fatal the config manifest on a core-free site).
  */
 class ReviewInvitationService
 {
     use Configurable;
     use Extensible;
     use Injectable;
-    use ShopEmailSender;
 
     /**
      * Order statuses that make an order eligible for a review invitation.
@@ -273,5 +279,49 @@ class ReviewInvitationService
             ->setTo($order->getLatestEmail())
             ->setFrom($this->senderEmail(), $this->senderName())
             ->setSubject($subject);
+    }
+
+    /**
+     * The From address: this class's `from_email` config, else the store's contact email, else the framework
+     * admin email, else a no-reply@host fallback. Framework-only (mirrors core's ShopEmailSender) so the service
+     * resolves its sender identity without depending on silvershop/core.
+     */
+    public function senderEmail(): string
+    {
+        $configured = (string) Config::forClass(static::class)->get('from_email');
+        if ($configured !== '') {
+            return $configured;
+        }
+
+        $siteConfig = SiteConfig::current_site_config();
+        if ($siteConfig && $siteConfig->hasField('ContactEmail')) {
+            $contact = (string) $siteConfig->getField('ContactEmail');
+            if ($contact !== '') {
+                return $contact;
+            }
+        }
+
+        $admin = Email::config()->get('admin_email');
+        if (is_array($admin)) {
+            $admin = array_key_first($admin) ?: '';
+        }
+
+        return $admin ?: ('no-reply@' . (parse_url(Director::absoluteBaseURL(), PHP_URL_HOST) ?: 'example.com'));
+    }
+
+    /**
+     * The From display name: the store-profile shop name when available, else the site title.
+     */
+    public function senderName(): string
+    {
+        $siteConfig = SiteConfig::current_site_config();
+        if ($siteConfig && $siteConfig->hasMethod('StoreProfileName')) {
+            $name = (string) $siteConfig->StoreProfileName();
+            if ($name !== '') {
+                return $name;
+            }
+        }
+
+        return (string) ($siteConfig ? $siteConfig->Title : '');
     }
 }

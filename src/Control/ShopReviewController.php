@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace SilverShop\Reviews\Control;
 
-use SilverShop\Model\Order;
 use SilverShop\Reviews\Model\Review;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\Director;
@@ -19,13 +18,16 @@ use SilverStripe\Forms\LiteralField;
 use SilverStripe\Forms\TextareaField;
 use SilverStripe\Forms\TextField;
 use SilverStripe\Forms\Validation\RequiredFieldsValidator;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Member;
 use SilverStripe\Security\Security;
 use SilverStripe\SiteConfig\SiteConfig;
 
 /**
- * Public "review our shop" page: lets a visitor leave an overall store review (subject = SiteConfig),
- * gated by the same who_can_review config, with honeypot + throttle anti-spam.
+ * Public "review our company / shop" page: lets a visitor leave an overall review of the site owner
+ * (subject = SiteConfig), gated by the same who_can_review config, with honeypot + throttle anti-spam.
+ * Core-free — this is the company/website-review surface that works on a plain SilverStripe site; the
+ * 'verified' gate only consults silvershop/core's Order when it is installed.
  */
 class ShopReviewController extends Controller
 {
@@ -68,16 +70,29 @@ class ShopReviewController extends Controller
         }
     }
 
+    /**
+     * Whether to use company/website wording instead of shop wording on this surface (auto on a core-free site).
+     */
+    public function IsCompanyMode(): bool
+    {
+        return Review::companyLabels();
+    }
+
     public function ReviewGateMessage(): string
     {
         if ($this->CanReview()) {
             return '';
         }
+        $company = $this->IsCompanyMode();
         if (Review::config()->get('who_can_review') === 'verified') {
-            return _t(self::class . '.GateVerified', 'Only customers who have ordered can review the shop.');
+            return $company
+                ? _t(self::class . '.GateVerifiedCompany', 'Only customers who have ordered can leave a review.')
+                : _t(self::class . '.GateVerified', 'Only customers who have ordered can review the shop.');
         }
 
-        return _t(self::class . '.GateMembers', 'Please log in to review the shop.');
+        return $company
+            ? _t(self::class . '.GateMembersCompany', 'Please log in to leave a review.')
+            : _t(self::class . '.GateMembers', 'Please log in to review the shop.');
     }
 
     public function ShopReviewForm(): ?Form
@@ -201,7 +216,14 @@ class ShopReviewController extends Controller
 
     protected function memberHasOrdered(Member $member): bool
     {
-        return Order::get()
+        // Verified-buyer gating is only meaningful with silvershop/core; resolve the Order class dynamically
+        // so this controller carries no hard core dependency and stays available on a core-free site.
+        $orderClass = 'SilverShop\\Model\\Order';
+        if (!class_exists($orderClass)) {
+            return false;
+        }
+
+        return DataObject::get($orderClass)
             ->filter('MemberID', $member->ID)
             ->filter('Status:not', ['Cart', 'Unpaid'])
             ->exists();

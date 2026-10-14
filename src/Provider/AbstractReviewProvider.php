@@ -6,10 +6,10 @@ namespace SilverShop\Reviews\Provider;
 
 use GuzzleHttp\Client;
 use Psr\SimpleCache\CacheInterface;
-use SilverShop\Model\Order;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Injector\Injectable;
 use SilverStripe\Core\Injector\Injector;
+use SilverStripe\ORM\DataObject;
 
 /**
  * Base adapter: every capability off and every call a no-op, plus cached JSON HTTP helpers. Concrete
@@ -46,9 +46,23 @@ abstract class AbstractReviewProvider implements ReviewProvider
         return false;
     }
 
-    public function sendInvitation(Order $order): bool
+    public function sendInvitation(DataObject $order): bool
     {
         return false;
+    }
+
+    /**
+     * The customer email for an order, read defensively so the provider layer carries no hard silvershop/core
+     * dependency. The call is dynamic on purpose: getLatestEmail() is a core Order method, so static analysis
+     * stays clean on a core-free install.
+     */
+    protected function orderEmail(DataObject $order): string
+    {
+        if (!$order->hasMethod('getLatestEmail')) {
+            return '';
+        }
+
+        return (string) $order->{'getLatestEmail'}();
     }
 
     public function getShopRating(): ?ProviderRating

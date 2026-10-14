@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%t SilverShop\Reviews.ShopReviewTitle "Review our shop" %> &middot; $SiteTitle</title>
+    <title><% if $IsCompanyMode %><%t SilverShop\Reviews.CompanyReviewTitle "Review our company" %><% else %><%t SilverShop\Reviews.ShopReviewTitle "Review our shop" %><% end_if %> &middot; $SiteTitle</title>
     $ShopConfig.ShopRatingSchemaOrg
     <style>
         body{margin:0;background:#f4f4f4;font-family:Arial,Helvetica,sans-serif;color:#333;line-height:1.5}
@@ -31,7 +31,7 @@
 <body>
     <div class="wrap">
         <h1>$SiteTitle</h1>
-        <h2><%t SilverShop\Reviews.ReviewOurShop "Review our shop" %></h2>
+        <h2><% if $IsCompanyMode %><%t SilverShop\Reviews.ReviewOurCompany "Review our company" %><% else %><%t SilverShop\Reviews.ReviewOurShop "Review our shop" %><% end_if %></h2>
 
         <% with $ShopConfig %>
             <% if $ProviderShopRating %>
@@ -48,7 +48,7 @@
                 <div class="summary">
                     <span class="avg">$ShopAverageRating</span><span>/ 5</span>
                     <span class="stars" aria-hidden="true"><span class="stars-off">★★★★★</span><span class="stars-on" style="width:{$ShopRatingPercent}%">★★★★★</span></span>
-                    <span class="count"><%t SilverShop\Reviews.ShopCount "{count} shop review(s)" count=$ShopRatingCount %></span>
+                    <span class="count"><% if $IsCompanyMode %><%t SilverShop\Reviews.CompanyCount "{count} review(s)" count=$ShopRatingCount %><% else %><%t SilverShop\Reviews.ShopCount "{count} shop review(s)" count=$ShopRatingCount %><% end_if %></span>
                 </div>
                 <% loop $ApprovedShopReviews.Limit(5) %>
                     <article class="review">

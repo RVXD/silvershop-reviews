@@ -1,6 +1,6 @@
 {
     "name": "silvershop/reviews",
-    "description": "Product and shop reviews with star ratings, moderation, verified purchases and aggregate rating (JSON-LD) for SilverShop.",
+    "description": "Reviews with star ratings, moderation and aggregate rating (JSON-LD) for SilverStripe. Works on any site for company/website reviews; product reviews, verified purchases and order-triggered invitations light up when silvershop/core is present.",
     "type": "silverstripe-vendormodule",
     "keywords": [
         "silverstripe",
@@ -19,8 +19,10 @@
     "require": {
         "php": "^8.3",
         "silverstripe/framework": "^6.0",
-        "silverstripe/reports": "^6.0",
-        "silvershop/core": "^6"
+        "silverstripe/cms": "^6.0",
+        "silverstripe/siteconfig": "^6.0",
+        "silverstripe/admin": "^3.0",
+        "silverstripe/reports": "^6.0"
     },
     "require-dev": {
         "cambis/silverstan": "^2.1",
@@ -30,15 +32,20 @@
         "silvershop/search": "dev-main"
     },
     "suggest": {
+        "silvershop/core": "Enables product reviews, verified-purchase badges and order-triggered invitation emails; the module does company/website reviews (on SiteConfig) without it.",
         "silvershop/store-profile": "Shared shop identity used as the sender for review-invitation emails (v2).",
         "silverstripe/queuedjobs": "Scheduled review-invitation emails after an order is fulfilled (v2).",
         "silverstripe/spamprotection": "Pluggable spam protection (reCAPTCHA/hCaptcha/...) auto-enabled on the public forms.",
-        "silvershop/search": "Adds a star-rating facet to the storefront product search."
+        "silvershop/search": "Adds a star-rating facet to the storefront product search (requires silvershop/core)."
     },
     "repositories": [
         {
             "type": "vcs",
             "url": "https://github.com/RVXD/silvershop-search.git"
+        },
+        {
+            "type": "vcs",
+            "url": "https://github.com/silvershop/silvershop-core.git"
         }
     ],
     "scripts": {

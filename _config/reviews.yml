@@ -3,14 +3,9 @@ Name: silvershop-reviews
 After:
   - '#silvershop'
 ---
-SilverShop\Page\Product:
-  extensions:
-    - SilverShop\Reviews\Extension\ReviewableProductExtension
-
-SilverShop\Page\ProductController:
-  extensions:
-    - SilverShop\Reviews\Extension\ProductReviewControllerExtension
-
+# The SiteConfig block is framework-safe (no silvershop/core). The shop-coupled wiring —
+# Product / ProductController extensions, the Review↔Order relation, the review-invitation route and
+# admin tab — lives in the module's class_exists()-guarded _config.php so the module boots with core absent.
 SilverStripe\SiteConfig\SiteConfig:
   extensions:
     - SilverShop\Reviews\Extension\ShopReviewExtension

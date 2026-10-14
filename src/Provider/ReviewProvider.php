@@ -4,12 +4,16 @@ declare(strict_types=1);
 
 namespace SilverShop\Reviews\Provider;
 
-use SilverShop\Model\Order;
+use SilverStripe\ORM\DataObject;
 
 /**
  * An external review provider (Trustpilot, Kiyoh, The Feedback Company, …). A provider can plug into any
  * of three modes — invitation hand-off, shop-rating display, product-rating display — and declares which
  * it supports. Adapters usually extend {@link AbstractReviewProvider} and override only what they offer.
+ *
+ * The display modes (getShopRating / getProductRating) are entirely core-free; only the invitation hand-off
+ * touches an order, so its parameter is type-hinted to the framework DataObject (a silvershop/core Order at
+ * runtime) to keep the provider contract loadable and analysable without silvershop/core.
  */
 interface ReviewProvider
 {
@@ -36,8 +40,9 @@ interface ReviewProvider
 
     /**
      * Hand an order off to the provider so it sends the review invitation. Return true on success.
+     * $order is a silvershop/core Order (passed as a DataObject so the contract stays core-free).
      */
-    public function sendInvitation(Order $order): bool;
+    public function sendInvitation(DataObject $order): bool;
 
     /**
      * The store's aggregate rating at the provider, or null when unavailable.

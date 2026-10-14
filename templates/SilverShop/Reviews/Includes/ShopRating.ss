@@ -6,7 +6,7 @@
             .shop-rating__stars .on{position:absolute;top:0;left:0;overflow:hidden;color:#f5a623}
             .shop-rating a{color:inherit;text-decoration:none}
         </style>
-        <a href="{$BaseHref}shop-review" title="<%t SilverShop\Reviews.ReadShopReviews "Read our shop reviews" %>">
+        <a href="{$BaseHref}shop-review" title="<% if $SiteConfig.IsCompanyMode %><%t SilverShop\Reviews.ReadCompanyReviews "Read our reviews" %><% else %><%t SilverShop\Reviews.ReadShopReviews "Read our shop reviews" %><% end_if %>">
             <span class="shop-rating__stars" aria-hidden="true"><span class="off">★★★★★</span><span class="on" style="width:{$SiteConfig.ShopRatingPercent}%">★★★★★</span></span>
             <strong>$SiteConfig.ShopAverageRating</strong>/5
             <span>(<%t SilverShop\Reviews.ShopCountShort "{count} reviews" count=$SiteConfig.ShopRatingCount %>)</span>

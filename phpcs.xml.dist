@@ -25,6 +25,21 @@
     </rule>
     <rule ref="PSR1.Files.SideEffects.FoundWithSymbols">
         <exclude-pattern>tests/bootstrap.php</exclude-pattern>
+        <!-- RatingFacet implements an OPTIONAL dependency's interface (silvershop/search) and is declared only
+             when it is present (if-guarded), so the module boots standalone without search. -->
+        <exclude-pattern>src/Search/RatingFacet.php</exclude-pattern>
+    </rule>
+
+    <!-- The if-guarded facet keeps its body at class indent (not nested under the guard) to keep the diff
+         minimal; skip scope-indent for it only. -->
+    <rule ref="Generic.WhiteSpace.ScopeIndent">
+        <exclude-pattern>src/Search/RatingFacet.php</exclude-pattern>
+    </rule>
+
+    <!-- The facet wraps the class in an if (interface_exists) guard, so the class docblock no longer sits
+         directly under the file header; skip the strict file-header ordering sniff for it. -->
+    <rule ref="PSR12.Files.FileHeader">
+        <exclude-pattern>src/Search/RatingFacet.php</exclude-pattern>
     </rule>
 
     <!-- TestOnly stand-in DataObjects live beside the test that uses them -->

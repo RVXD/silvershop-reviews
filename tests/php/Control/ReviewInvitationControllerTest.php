@@ -12,6 +12,15 @@ class ReviewInvitationControllerTest extends FunctionalTest
 {
     protected $usesDatabase = true;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Review invitations are order-bound (needs silvershop/core); skip when it's absent.
+        if (!class_exists('SilverShop\\Model\\Order')) {
+            $this->markTestSkipped('silvershop/core is not installed');
+        }
+    }
+
     private function makeInvitation(string $status = 'Sent'): ReviewInvitation
     {
         $order = Order::create();

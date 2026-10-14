@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace SilverShop\Reviews\Model;
 
-use SilverShop\Model\Order;
 use SilverShop\Reviews\Control\ReviewVoteController;
 use SilverStripe\Core\Convert;
 use SilverStripe\Forms\DropdownField;
@@ -34,10 +33,8 @@ use SilverStripe\Security\SecurityToken;
  * @property int    $SubjectID
  * @property string $SubjectClass
  * @property int    $MemberID
- * @property int    $OrderID
  * @method DataObject Subject()
  * @method Member Member()
- * @method Order Order()
  */
 class Review extends DataObject
 {
@@ -121,6 +118,12 @@ class Review extends DataObject
      */
     private static int $max_points = 5;
 
+    /**
+     * Label the overall-review surface for a company/website (no shop) rather than a shop. null = auto-detect:
+     * company wording when silvershop/core is absent, shop wording when it is present. Set true/false to force.
+     */
+    private static ?bool $company_review_labels = null;
+
     private static array $db = [
         'Rating' => 'Int',
         'Title' => 'Varchar(255)',
@@ -134,9 +137,9 @@ class Review extends DataObject
     ];
 
     private static array $has_one = [
-        'Subject' => DataObject::class, // polymorphic: Product (v1), SiteConfig / Variation (later)
+        'Subject' => DataObject::class, // polymorphic: Product, SiteConfig (company/site review), Variation (later)
         'Member' => Member::class,
-        'Order' => Order::class,
+        // 'Order' is added by ReviewOrderExtension when silvershop/core is present (soft dependency).
     ];
 
     private static array $has_many = [
@@ -382,6 +385,21 @@ class Review extends DataObject
     public static function HoneypotEnabled(): bool
     {
         return (bool) self::config()->get('use_honeypot');
+    }
+
+    /**
+     * Whether the overall-review surface should use company/website wording instead of shop wording. Follows the
+     * `company_review_labels` config when set; otherwise auto-detects (company wording when silvershop/core — a
+     * shop — is absent). Lets the same SiteConfig-review feature read sensibly on a plain site and on a shop.
+     */
+    public static function companyLabels(): bool
+    {
+        $configured = self::config()->get('company_review_labels');
+        if ($configured !== null) {
+            return (bool) $configured;
+        }
+
+        return !class_exists('SilverShop\\Model\\Order');
     }
 
     /**

@@ -3,6 +3,10 @@ nl:
     TITLE: 'Beoordeling'
     STARS: '{stars}★ en hoger'
   SilverShop\Reviews:
+    CompanyCount: '{count} beoordeling(en)'
+    CompanyReviewTitle: 'Beoordeel ons bedrijf'
+    ReadCompanyReviews: 'Lees onze beoordelingen'
+    ReviewOurCompany: 'Beoordeel ons bedrijf'
     AlreadyReviewed: 'Je hebt deze bestelling beoordeeld. Bedankt voor je feedback.'
     AskHeading: 'Stel een vraag'
     Count: '{count} review(s)'
@@ -46,6 +50,8 @@ nl:
     ThanksModerated: 'Bedankt! Je review(s) verschijnen zodra ze zijn goedgekeurd.'
     Title: 'Titel'
   SilverShop\Reviews\Control\ShopReviewController:
+    GateMembersCompany: 'Log in om een beoordeling te plaatsen.'
+    GateVerifiedCompany: 'Alleen klanten die hebben besteld kunnen een beoordeling plaatsen.'
     AuthorEmail: 'Je e-mailadres'
     AuthorName: 'Je naam'
     BadRating: 'Kies een beoordeling tussen 1 en 5.'

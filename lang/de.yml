@@ -3,6 +3,10 @@ de:
     TITLE: 'Bewertung'
     STARS: '{stars}★ und mehr'
   SilverShop\Reviews:
+    CompanyCount: '{count} Bewertung(en)'
+    CompanyReviewTitle: 'Bewerten Sie unser Unternehmen'
+    ReadCompanyReviews: 'Unsere Bewertungen lesen'
+    ReviewOurCompany: 'Bewerten Sie unser Unternehmen'
     AlreadyReviewed: 'Sie haben diese Bestellung bewertet. Vielen Dank für Ihr Feedback.'
     AskHeading: 'Eine Frage stellen'
     Count: '{count} Bewertung(en)'
@@ -46,6 +50,8 @@ de:
     ThanksModerated: 'Vielen Dank! Ihre Bewertung(en) erscheinen nach der Freigabe.'
     Title: 'Titel'
   SilverShop\Reviews\Control\ShopReviewController:
+    GateMembersCompany: 'Bitte melden Sie sich an, um eine Bewertung abzugeben.'
+    GateVerifiedCompany: 'Nur Kunden, die bestellt haben, können eine Bewertung abgeben.'
     AuthorEmail: 'Ihre E-Mail'
     AuthorName: 'Ihr Name'
     BadRating: 'Bitte wählen Sie eine Bewertung zwischen 1 und 5.'

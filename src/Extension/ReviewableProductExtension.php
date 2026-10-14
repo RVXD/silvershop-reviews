@@ -8,15 +8,8 @@ use SilverShop\Reviews\Model\ProductQuestion;
 use SilverShop\Reviews\Model\Review;
 use SilverShop\Reviews\Provider\ProviderRating;
 use SilverShop\Reviews\Provider\ReviewProviderRegistry;
-use SilverStripe\Control\Controller;
-use SilverStripe\Core\Extension;
-use SilverStripe\Model\List\PaginatedList;
 use SilverStripe\Forms\FieldList;
-use SilverStripe\Forms\GridField\GridField;
-use SilverStripe\Forms\GridField\GridFieldConfig_RecordEditor;
 use SilverStripe\Forms\LiteralField;
-use SilverStripe\Model\ArrayData;
-use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\ORM\DB;
@@ -24,12 +17,14 @@ use SilverStripe\ORM\FieldType\DBHTMLText;
 use SilverStripe\Security\Member;
 
 /**
- * Makes a Product reviewable: owns its reviews (polymorphic), exposes aggregate rating helpers for
- * templates, adds a moderation grid in the CMS, and emits aggregate-rating JSON-LD for rich snippets.
+ * Makes a Product reviewable (the shop subject). Inherits the generic aggregate helpers from
+ * {@see ReviewableExtension} and adds the Product-only surface: the denormalised sort column, verified-buyer
+ * detection (needs silvershop/core's Order), Q&A, product-level JSON-LD and the external product provider
+ * rating. Attached only when silvershop/core is present (guarded in the module's _config.php).
  *
- * @extends Extension<\SilverShop\Page\Product>
+ * @extends ReviewableExtension<\SilverShop\Page\Product>
  */
-class ReviewableProductExtension extends Extension
+class ReviewableProductExtension extends ReviewableExtension
 {
     /**
      * The sortable product column that mirrors {@see AverageRating()}. Exposed as a constant so the storefront can
@@ -93,54 +88,6 @@ class ReviewableProductExtension extends Extension
     }
 
     /**
-     * Approved reviews for this product, newest first — the list shown on the storefront.
-     */
-    public function ApprovedReviews(): DataList
-    {
-        $owner = $this->getOwner();
-        if (!$owner->isInDB()) {
-            // A not-yet-saved product has an UnsavedRelationList; return an empty DataList of the right type.
-            return Review::get()->filter('ID', 0);
-        }
-
-        return $owner->Reviews()->filter('Approved', true);
-    }
-
-    public function HasReviews(): bool
-    {
-        return $this->ApprovedReviews()->exists();
-    }
-
-    /**
-     * Approved reviews as a paginated list (page size from `Review.reviews_per_page`, 0 = all), for the
-     * product page. Reads the `start` GET var from the current request.
-     */
-    public function PaginatedReviews(): PaginatedList
-    {
-        $list = PaginatedList::create($this->ApprovedReviews(), Controller::curr()->getRequest());
-        $list->setPageLength(max(0, (int) Review::config()->get('reviews_per_page')));
-
-        return $list;
-    }
-
-    public function RatingCount(): int
-    {
-        return $this->ApprovedReviews()->count();
-    }
-
-    /**
-     * Mean rating of approved reviews (0.0 when none), rounded to one decimal.
-     */
-    public function AverageRating(): float
-    {
-        if (!$this->HasReviews()) {
-            return 0.0;
-        }
-
-        return round((float) $this->ApprovedReviews()->avg('Rating'), 1);
-    }
-
-    /**
      * Recompute the denormalised {@see $db} AverageRating from the approved reviews and store it on BOTH the draft and
      * live product rows. Written with a direct query (not $owner->write()) because this is a cache column, not
      * editorial content: a normal write would create a new Version and leave the Live stage stale for the storefront.
@@ -175,39 +122,12 @@ class ReviewableProductExtension extends Extension
     }
 
     /**
-     * Average as a 0–100 percentage, for CSS star-bar widths.
-     */
-    public function AverageRatingPercent(): int
-    {
-        return (int) round($this->AverageRating() / 5 * 100);
-    }
-
-    /**
-     * Per-star counts (5★ down to 1★) for a ratings breakdown bar.
-     */
-    public function RatingBreakdown(): ArrayList
-    {
-        $total = $this->RatingCount();
-        $list = ArrayList::create();
-        for ($stars = 5; $stars >= 1; $stars--) {
-            $count = $this->ApprovedReviews()->filter('Rating', $stars)->count();
-            $list->push(ArrayData::create([
-                'Stars' => $stars,
-                'Count' => $count,
-                'Percent' => $total > 0 ? (int) round($count / $total * 100) : 0,
-            ]));
-        }
-
-        return $list;
-    }
-
-    /**
      * Has this member (or email) bought this product in a placed order? Used to flag verified reviews.
+     * Needs silvershop/core's Order; this extension is only attached when core is present.
      */
     public function reviewerHasPurchased(?Member $member, ?string $email = null): bool
     {
         $owner = $this->getOwner();
-        $reviews = null;
 
         // Walk the member's / email's orders and look for this product among the order items.
         $orders = \SilverShop\Model\Order::get()->filter('Status:not', ['Cart', 'Unpaid']);
@@ -251,13 +171,7 @@ class ReviewableProductExtension extends Extension
             '@context' => 'https://schema.org',
             '@type' => 'Product',
             'name' => $owner->getTitle(),
-            'aggregateRating' => [
-                '@type' => 'AggregateRating',
-                'ratingValue' => (string) $this->AverageRating(),
-                'reviewCount' => $this->RatingCount(),
-                'bestRating' => '5',
-                'worstRating' => '1',
-            ],
+            'aggregateRating' => $this->aggregateRatingNode(),
             'review' => [],
         ];
 
@@ -330,16 +244,9 @@ class ReviewableProductExtension extends Extension
             )
         );
 
-        $grid = GridField::create(
-            'Reviews',
-            _t(self::class . '.Reviews', 'Reviews'),
-            $this->getOwner()->Reviews(),
-            GridFieldConfig_RecordEditor::create()
-        );
-
         // Reviews tab: the grid, then the rating summary (spaced away from the grid), then a guidance notice.
         $fields->addFieldsToTab('Root.Reviews', [
-            $grid,
+            $this->buildReviewsGrid('Reviews', _t(self::class . '.Reviews', 'Reviews')),
             LiteralField::create('ReviewsSummary', $summary),
             LiteralField::create('ReviewsInfo', $this->cmsNotice(_t(
                 self::class . '.ReviewsInfo',

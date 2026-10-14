@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Reviews\Provider;
 
-use SilverShop\Model\Order;
+use SilverStripe\ORM\DataObject;
 use SilverStripe\SiteConfig\SiteConfig;
 
 /**
@@ -107,12 +107,12 @@ class TrustpilotProvider extends AbstractReviewProvider
         return ProviderRating::create((float) $stars, (int) ($summary['numberOfReviews'] ?? 0), '', $this->getName());
     }
 
-    public function sendInvitation(Order $order): bool
+    public function sendInvitation(DataObject $order): bool
     {
         if (!$this->supportsInvitations() || !$this->isConfigured()) {
             return false;
         }
-        $to = $order->getLatestEmail();
+        $to = $this->orderEmail($order);
         if (!$to) {
             return false;
         }
@@ -124,7 +124,7 @@ class TrustpilotProvider extends AbstractReviewProvider
             "https://invitations-api.trustpilot.com/v1/private/business-units/{$buid}/email-invitations",
             [
                 'consumerEmail' => $to,
-                'consumerName' => $senderName ? $order->getLatestEmail() : $to,
+                'consumerName' => $to,
                 'referenceNumber' => (string) $order->ID,
                 'locale' => 'en-US',
                 'senderName' => $senderName,

@@ -10,10 +10,20 @@ use SilverShop\Reviews\Service\ReviewInvitationService;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Dev\TestOnly;
+use SilverStripe\ORM\DataObject;
 
 class ReviewInvitationServiceTest extends SapphireTest
 {
     protected $usesDatabase = true;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // The whole invitation stack is order-bound (needs silvershop/core); skip when it's absent.
+        if (!class_exists('SilverShop\\Model\\Order')) {
+            $this->markTestSkipped('silvershop/core is not installed');
+        }
+    }
 
     private function makeOrder(string $email = 'buyer@example.com', string $status = 'Sent'): Order
     {
@@ -137,7 +147,7 @@ class RecordingHandOffProvider extends AbstractReviewProvider implements TestOnl
         return true;
     }
 
-    public function sendInvitation(Order $order): bool
+    public function sendInvitation(DataObject $order): bool
     {
         self::$calls[] = (int) $order->ID;
         return true;

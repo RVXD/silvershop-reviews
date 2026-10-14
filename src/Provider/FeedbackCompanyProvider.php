@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Reviews\Provider;
 
-use SilverShop\Model\Order;
+use SilverStripe\ORM\DataObject;
 
 /**
  * The Feedback Company adapter (NL; Utrecht).
@@ -109,12 +109,12 @@ class FeedbackCompanyProvider extends AbstractReviewProvider
         return ProviderRating::create(((float) $avg10) / 2, (int) ($summary['total_reviews'] ?? 0), '', $this->getName());
     }
 
-    public function sendInvitation(Order $order): bool
+    public function sendInvitation(DataObject $order): bool
     {
         if (!$this->isConfigured()) {
             return false;
         }
-        $to = $order->getLatestEmail();
+        $to = $this->orderEmail($order);
         if (!$to) {
             return false;
         }

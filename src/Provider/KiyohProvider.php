@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace SilverShop\Reviews\Provider;
 
-use SilverShop\Model\Order;
+use SilverStripe\ORM\DataObject;
 
 /**
  * Kiyoh / Klantenvertellen adapter (NL; KV Media Groep).
@@ -105,12 +105,12 @@ class KiyohProvider extends AbstractReviewProvider
         return ProviderRating::create(((float) $avg10) / 2, (int) ($data['numberReviews'] ?? 0), '', $this->getName());
     }
 
-    public function sendInvitation(Order $order): bool
+    public function sendInvitation(DataObject $order): bool
     {
         if (!$this->isConfigured()) {
             return false;
         }
-        $to = $order->getLatestEmail();
+        $to = $this->orderEmail($order);
         if (!$to) {
             return false;
         }

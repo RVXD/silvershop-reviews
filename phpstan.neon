@@ -5,6 +5,18 @@ parameters:
     level: 5
     paths:
         - src
+    # These classes integrate with silvershop/core (a SOFT dependency, absent from the standalone analysis).
+    # They are only ever wired behind class_exists() guards in _config.php (or reached only on a shop), and are
+    # exercised by the with-core test run and live on a shop install.
+    excludePaths:
+        - src/Extension/ReviewableProductExtension.php
+        - src/Extension/ProductReviewControllerExtension.php
+        - src/Extension/ReviewOrderExtension.php
+        - src/Model/ReviewInvitation.php
+        - src/Control/ReviewInvitationController.php
+        - src/Service/ReviewInvitationService.php
+        - src/Task/RecalculateProductRatingsTask.php
+        - src/Task/SendReviewInvitationsTask.php
     treatPhpDocTypesAsCertain: false
     silverstan:
         includeTestOnly: true

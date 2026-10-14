@@ -2,6 +2,9 @@
 Name: silvershop-reviews-routes
 After: '#rootroutes'
 ---
+# All three controllers load without silvershop/core (core classes are referenced lazily, inside methods), so
+# their routes are framework-safe to register. The order-bound invitation landing ('review') simply 404s on a
+# core-free site (no invitations exist); the invitation FEATURE is gated at the service/admin level instead.
 SilverStripe\Control\Director:
   rules:
     'review': 'SilverShop\Reviews\Control\ReviewInvitationController'
