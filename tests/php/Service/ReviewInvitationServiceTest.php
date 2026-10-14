@@ -86,6 +86,30 @@ class ReviewInvitationServiceTest extends SapphireTest
             'native reminders are skipped while a provider handles invitations'
         );
     }
+
+    public function testInvitationEmailRendersFlatShellWithTranslatableBody(): void
+    {
+        $order = $this->makeOrder('render@example.com');
+        $invitation = $this->makeInvitation($order);
+        $service = ReviewInvitationService::create();
+
+        $html = (string) $service->renderEmail($invitation, false);
+        $this->assertStringContainsString('silvershop-email', $html, 'renders through the shared flat shell');
+        $this->assertStringContainsString('Write your review', $html, 'CTA comes from the EmailButton i18n key');
+        $this->assertStringContainsString(
+            'Thanks for shopping with us',
+            $html,
+            'intro comes from the EmailIntro i18n key (no longer hardcoded)'
+        );
+        $this->assertStringContainsString(
+            "Don't send me review invitations for this order",
+            $html,
+            'opt-out link comes from the EmailOptOutLink i18n key'
+        );
+
+        $reminder = (string) $service->renderEmail($invitation, true);
+        $this->assertStringContainsString('A quick reminder', $reminder, 'reminder variant uses EmailReminderIntro');
+    }
 }
 
 class RecordingHandOffProvider extends AbstractReviewProvider implements TestOnly

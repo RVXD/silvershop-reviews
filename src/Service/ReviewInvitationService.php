@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace SilverShop\Reviews\Service;
 
+use SilverShop\Checkout\ShopEmailSender;
 use SilverShop\Model\Order;
 use SilverShop\Reviews\Model\ReviewInvitation;
 use SilverShop\Reviews\Provider\ReviewProviderRegistry;
-use SilverStripe\Control\Director;
 use SilverStripe\Control\Email\Email;
 use SilverStripe\Core\Config\Configurable;
 use SilverStripe\Core\Extensible;
@@ -16,7 +16,6 @@ use SilverStripe\Model\ArrayData;
 use SilverStripe\Model\List\ArrayList;
 use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\ORM\FieldType\DBHTMLText;
-use SilverStripe\SiteConfig\SiteConfig;
 
 /**
  * Finds orders that are due a review invitation, sends the (tokenised) invitation email, and later a
@@ -28,6 +27,7 @@ class ReviewInvitationService
     use Configurable;
     use Extensible;
     use Injectable;
+    use ShopEmailSender;
 
     /**
      * Order statuses that make an order eligible for a review invitation.
@@ -268,42 +268,10 @@ class ReviewInvitationService
 
         return Email::create()
             ->setHTMLTemplate('SilverShop\\Reviews\\Email\\ReviewInvitationEmail')
+            ->setPlainTemplate('SilverShop\\Reviews\\Email\\ReviewInvitationEmailPlain')
             ->setData($data)
             ->setTo($order->getLatestEmail())
             ->setFrom($this->senderEmail(), $this->senderName())
             ->setSubject($subject);
-    }
-
-    public function senderEmail(): string
-    {
-        $configured = (string) static::config()->get('from_email');
-        if ($configured) {
-            return $configured;
-        }
-
-        $siteConfig = SiteConfig::current_site_config();
-        if ($siteConfig->hasField('ContactEmail') && $siteConfig->ContactEmail) {
-            return (string) $siteConfig->ContactEmail;
-        }
-
-        $admin = Email::config()->get('admin_email');
-        if (is_array($admin)) {
-            $admin = array_key_first($admin) ?: '';
-        }
-
-        return $admin ?: ('no-reply@' . (parse_url(Director::absoluteBaseURL(), PHP_URL_HOST) ?: 'example.com'));
-    }
-
-    public function senderName(): string
-    {
-        $siteConfig = SiteConfig::current_site_config();
-        if ($siteConfig->hasMethod('StoreProfileName')) {
-            $name = $siteConfig->StoreProfileName();
-            if ($name) {
-                return (string) $name;
-            }
-        }
-
-        return (string) $siteConfig->Title;
     }
 }
