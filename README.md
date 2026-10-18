@@ -82,7 +82,7 @@ SilverShop\Reviews\Model\Review:
   max_points: 5              # max plus points, and separately max minus points, kept per review
   submit_throttle_seconds: 30
   allow_votes: true          # helpful 👍/👎 votes
-  allow_photos: true         # photo uploads on reviews
+  allow_photos: false        # photo uploads on reviews — OFF by default (opt-in); set true to enable
   max_photos: 3
   max_photo_size: '2m'       # max size per uploaded photo
   reviews_per_page: 10       # reviews per page on the product page (0 = show all, no pagination)

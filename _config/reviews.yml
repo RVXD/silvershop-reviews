@@ -21,9 +21,10 @@ SilverShop\Reviews\Model\Review:
   submit_throttle_seconds: 30
   # Built-in hidden honeypot on the public forms. Turn off if you rely only on silverstripe/spamprotection.
   use_honeypot: true
-  # Helpful votes + photo uploads on reviews (v5).
+  # Helpful votes on reviews (v5).
   allow_votes: true
-  allow_photos: true
+  # Photo uploads on reviews — OFF by default (opt-in). Set true to let reviewers attach photos.
+  allow_photos: false
   max_photos: 3
   max_photo_size: '2m'       # max size per uploaded photo (caps anonymous uploads)
   # Reviews shown per page on the product page (0 = show all, no pagination).
