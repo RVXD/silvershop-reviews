@@ -1,4 +1,4 @@
-# silvershop/reviews
+# silvershop-suite/reviews
 
 Product and shop reviews for [SilverShop](https://github.com/silvershop/silvershop-core) (SilverStripe CMS 6):
 star ratings, moderation, verified purchases, review-invitation emails, photo reviews, plus/minus points
@@ -13,7 +13,7 @@ Kiyoh / Klantenvertellen, The Feedback Company).
 ## Installation
 
 ```bash
-composer require silvershop/reviews
+composer require silvershop-suite/reviews
 ```
 
 Then run a dev/build (`/dev/build?flush=1`). The extensions are applied automatically to `Product`,
@@ -116,7 +116,7 @@ vendor/bin/sake tasks:SilverShop-Reviews-Task-SendReviewInvitationsTask --run --
 # preview one order's email without sending: ...?preview=<orderID>
 ```
 
-The sender identity (name + logo) comes from [`silvershop/store-profile`](https://github.com/silvershop/silvershop-store-profile)
+The sender identity (name + logo) comes from [`silvershop-suite/store-profile`](https://github.com/silvershop/silvershop-store-profile)
 when installed. Make sure a mail transport (`MAILER_DSN`) is configured for real delivery.
 
 ### External review providers (optional)

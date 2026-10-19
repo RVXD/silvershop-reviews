@@ -1,5 +1,5 @@
 {
-    "name": "silvershop/reviews",
+    "name": "silvershop-suite/reviews",
     "description": "Reviews with star ratings, moderation and aggregate rating (JSON-LD) for SilverStripe. Works on any site for company/website reviews; product reviews, verified purchases and order-triggered invitations light up when silvershop/core is present.",
     "type": "silverstripe-vendormodule",
     "keywords": [
@@ -33,15 +33,15 @@
         "silverstripe/recipe-testing": "^4",
         "silverstripe/sqlite3": "^4",
         "squizlabs/php_codesniffer": "^3.0",
-        "silvershop/search": "dev-main",
+        "silvershop-suite/search": "dev-main",
         "php-http/guzzle7-adapter": "^1.1"
     },
     "suggest": {
         "silvershop/core": "Enables product reviews, verified-purchase badges and order-triggered invitation emails; the module does company/website reviews (on SiteConfig) without it.",
-        "silvershop/store-profile": "Shared shop identity used as the sender for review-invitation emails (v2).",
+        "silvershop-suite/store-profile": "Shared shop identity used as the sender for review-invitation emails (v2).",
         "silverstripe/queuedjobs": "Scheduled review-invitation emails after an order is fulfilled (v2).",
         "silverstripe/spamprotection": "Pluggable spam protection (reCAPTCHA/hCaptcha/...) auto-enabled on the public forms.",
-        "silvershop/search": "Adds a star-rating facet to the storefront product search (requires silvershop/core)."
+        "silvershop-suite/search": "Adds a star-rating facet to the storefront product search (requires silvershop/core)."
     },
     "repositories": [
         {
