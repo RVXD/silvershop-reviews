@@ -42,7 +42,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/RVXD/silvershop-search.git"
+            "url": "https://github.com/silvershop-suite/silvershop-search.git"
         },
         {
             "type": "vcs",
