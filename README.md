@@ -234,3 +234,7 @@ override or add locales the usual Silverstripe way.
 ## License
 
 BSD-3-Clause
+
+## Credits
+
+Built and maintained by **Remy Vaartjes** (<remy@xd.nl>) — part of the **SilverShop-Suite**.
