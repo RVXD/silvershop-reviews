@@ -1,0 +1,14 @@
+---
+Name: silvershop-reviews-graphql
+Only:
+  moduleexists: 'silvershop-suite/api-graphql'
+After:
+  - '#graphql-schema-default'
+---
+# Registers this module's _graphql/ type fragment into the default schema — only when the GraphQL overlay is
+# installed, so reviews stays standalone. Adds Product.rating (aggregate), which rides the REST ReviewProductEnrichment.
+SilverStripe\GraphQL\Schema\Schema:
+  schemas:
+    default:
+      src:
+        silvershop-reviews: 'silvershop-suite/reviews: _graphql'

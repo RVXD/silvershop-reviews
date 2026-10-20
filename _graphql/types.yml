@@ -1,0 +1,17 @@
+# Re-opens the shared Product type (declared in silvershop-suite/api-graphql's _graphql/types.yml) to add the
+# aggregate `rating` field, and defines the nested ProductRating type. Field names mirror SilverShop\Api\Enrichment\
+# ReviewProductEnrichment ($data['rating']) key-for-key, so GraphQL's default array field-resolver maps the REST
+# serializer's output with no PHP. silverstripe/graphql merges the field into the single Product type
+# (Type::mergeWith). Aggregate only — the review list is a later (resolver) phase. Only read when the overlay is
+# installed (see _config/graphql.yml guard).
+
+# Adds Product.rating — rides SilverShop\Api\Enrichment\ReviewProductEnrichment
+Product:
+  fields:
+    rating: ProductRating
+
+# SilverShop\Api\Enrichment\ReviewProductEnrichment — {average (float), count (int)}
+ProductRating:
+  fields:
+    average: Float
+    count: Int
